@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="hello">Hello World, BzdzkActivity!</string>
+    <string name="app_name">Bzdzk</string>
+    <string name="query_name">查询</string>
+    <string name="query_hint">输入地名</string>
+    <string name="extent">选取范围</string>
+    
+    
+    <string name="loading">加载中，请稍候</string>
+    
+    
+    <!-- 网络连接错误 -->
+    <string name="online_error">网络连接错误，请检查网络是否连接</string>
+    <string name="title">提示</string>
+    <string name="know">知道了</string>
+    
+</resources>
