@@ -2,24 +2,25 @@ package com.vallny.bzdzk;
 
 import java.util.ArrayList;
 import java.util.Map;
-import java.util.Map.Entry;
 
-import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.AlertDialog.Builder;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.graphics.Color;
 import android.location.Location;
 import android.location.LocationListener;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Handler;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
 import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.actionbarsherlock.app.SherlockFragmentActivity;
@@ -71,12 +72,16 @@ public class BzdzkActivity extends SherlockFragmentActivity {
 
 	private String mark_url;
 	private TreeBean mark_tree;
+	private View view;
 	private final static String URL = "http://192.168.1.101:6080/arcgis/rest/services/PGIS/bzdzk/MapServer";
 	// private final static String URL =
 	// "http://192.168.1.101:6080/arcgis/rest/services/PGIS/XZQH/MapServer";
 	private final static String TAG = "com.vallny.bzdzk";
 
 	public final static double SEARCH_RADIUS = 5;
+
+	public final static int MARK = 0;
+	public final static int UN_MARK = 1;
 
 	/** Called when the activity is first created. */
 	@Override
@@ -126,6 +131,7 @@ public class BzdzkActivity extends SherlockFragmentActivity {
 		extent_bt = (Button) findViewById(R.id.extent);
 		un_mark_bt = (Button) findViewById(R.id.un_mark);
 
+		
 		mMapView.setOnStatusChangedListener(new OnStatusChangedListener() {
 			public void onStatusChanged(Object source, STATUS status) {
 				statusChange(source, status);
@@ -149,23 +155,81 @@ public class BzdzkActivity extends SherlockFragmentActivity {
 				mGraphicsLayer = getGraphicLayer();
 				int[] uids = mGraphicsLayer.getGraphicIDs(x, y, 2);
 				if (uids != null && uids.length > 0) {
-					int targetId = uids[0];
-					Graphic gr = mGraphicsLayer.getGraphic(targetId);
-					Map<String, Object> m = gr.getAttributes();
-					Point pt = mMapView.toMapPoint(x, y);
-					// Toast.makeText(BzdzkActivity.this, "X:" + pt.getX() +
-					// "Y:" + pt.getY() + "obj" + m.get("OBJECTID"), 0).show();
-					new AsyncMarkTask().execute(URLHelper.BASE + "bz", m.get("OBJECTID") + "", pt.getX() + "," + pt.getY());
+
+					alert(mark_tree, MARK, R.string.confirm_mark,uids,x,y);
+				
 
 				} else {
 					Toast.makeText(BzdzkActivity.this, "22222222", 0).show();
 				}
 			}
+
+			
 		});
 	}
 
+	
+	private void alert(TreeBean tree, int flag, int message, int[] uids, float x, float y) {
+		
+		new AlertDialog.Builder(BzdzkActivity.this).setTitle(R.string.title).setNegativeButton(R.string.negative, null).setNegativeButton(R.string.negative, null).setMessage(message)
+		.setPositiveButton(R.string.positive, new DialogClickListener(tree, flag,uids,x,y)).create().show();
+		
+	}
+	
+	/**
+	 * 弹出框
+	 * 
+	 * @param tree
+	 * @param flag
+	 * @param message
+	 */
+	private void alert(TreeBean tree, int flag, int message) {
+		new AlertDialog.Builder(BzdzkActivity.this).setTitle(R.string.title).setNegativeButton(R.string.negative, null).setNegativeButton(R.string.negative, null).setMessage(message)
+				.setPositiveButton(R.string.positive, new DialogClickListener(tree, flag)).create().show();
+	}
+
+	class DialogClickListener implements DialogInterface.OnClickListener {
+		private TreeBean tree;
+		private int flag;
+		private int[] uids; 
+		private float x, y;
+
+		public DialogClickListener(TreeBean tree, int flag) {
+			this.tree = tree;
+			this.flag = flag;
+		}
+
+		public DialogClickListener(TreeBean tree, int flag, int[] uids,  float x, float y) {
+			this.tree = tree;
+			this.flag = flag;
+			this.uids = uids;
+			this.x= x;
+			this.y = y;
+		}
+
+		public void onClick(DialogInterface dialog, int which) {
+			switch (flag) {
+			case UN_MARK:
+				new AsyncUnMarkTask(tree).execute(URLHelper.BASE + "qxbz" + "?zhid=" + tree.getId());
+				break;
+			case MARK:
+				int targetId = uids[0];
+				Graphic gr = mGraphicsLayer.getGraphic(targetId);
+				Map<String, Object> m = gr.getAttributes();
+				Point pt = mMapView.toMapPoint(x, y);
+				new AsyncMarkTask(tree).execute(URLHelper.BASE + "bz", m.get("OBJECTID") + "", pt.getX() + "," + pt.getY());
+				break;
+			}
+		}
+	}
+	
 	class AsyncUnMarkTask extends AsyncTask<String, Void, String> {
 		private ProgressDialog progress;
+		private TreeBean tree;
+
+		public AsyncUnMarkTask(TreeBean tree) {
+			this.tree = tree;
+		}
 
 		@Override
 		protected void onPreExecute() {
@@ -177,16 +241,22 @@ public class BzdzkActivity extends SherlockFragmentActivity {
 			progress.setMessage(BzdzkActivity.this.getString(R.string.un_marking));
 			progress.show();
 		}
-		
+
 		@Override
 		protected String doInBackground(String... params) {
-			return 	URLHelper.queryStringForGet(URLHelper.BASE+params[0]);
+			return URLHelper.queryStringForGet(params[0]);
 		}
-		
+
 		@Override
 		protected void onPostExecute(String result) {
 			super.onPostExecute(result);
 			if ("success".equals(result)) {
+				if (view != null) {
+					ImageView iv = (ImageView) view.findViewById(R.id.flag);
+//					iv.setVisibility(View.INVISIBLE);
+					iv.setImageBitmap(null);
+					tree.setMark(false);
+				}
 				new AlertDialog.Builder(BzdzkActivity.this).setTitle(R.string.title).setMessage(R.string.un_mark_success).setPositiveButton(R.string.know, null).create().show();
 			} else {
 				new AlertDialog.Builder(BzdzkActivity.this).setTitle(R.string.title).setMessage(R.string.un_mark_fasle).setPositiveButton(R.string.know, null).create().show();
@@ -196,12 +266,19 @@ public class BzdzkActivity extends SherlockFragmentActivity {
 			}
 
 		}
-		
+
+	
 	}
 
 	class AsyncMarkTask extends AsyncTask<String, Void, String> {
 
 		private ProgressDialog progress;
+		private TreeBean tree;
+		
+
+		public AsyncMarkTask(TreeBean tree) {
+			this.tree = tree;
+		}
 
 		@Override
 		protected void onPreExecute() {
@@ -260,6 +337,11 @@ public class BzdzkActivity extends SherlockFragmentActivity {
 		protected void onPostExecute(String result) {
 			super.onPostExecute(result);
 			if ("success".equals(result)) {
+				if (view != null) {
+					ImageView iv = (ImageView) view.findViewById(R.id.flag);
+					iv.setImageResource(R.drawable.ic_launcher);
+					tree.setMark(true);
+				}
 				new AlertDialog.Builder(BzdzkActivity.this).setTitle(R.string.title).setMessage(R.string.success).setPositiveButton(R.string.know, null).create().show();
 			} else {
 				new AlertDialog.Builder(BzdzkActivity.this).setTitle(R.string.title).setMessage(R.string.fasle).setPositiveButton(R.string.know, null).create().show();
@@ -271,11 +353,11 @@ public class BzdzkActivity extends SherlockFragmentActivity {
 		}
 	}
 
-	public void updateLayer(String layer, TreeBean tree) {
+	public void updateLayer(String layer, TreeBean tree, View view) {
 
 		boolean canMark = true;
 		mark_tree = tree;
-		
+		this.view = view;
 		if ("xq".equals(layer)) {
 			mark_url = "/13";
 		} else if ("mph".equals(layer)) {
@@ -290,11 +372,13 @@ public class BzdzkActivity extends SherlockFragmentActivity {
 			canMark = false;
 			extent_bt.setVisibility(View.GONE);
 			mark_tree = null;
+			this.view = null;
 		}
 		if (canMark) {
 			extent_bt.setVisibility(View.VISIBLE);
 			if (mark_tree.getMark()) {
 				un_mark_bt.setVisibility(View.VISIBLE);
+				un_mark_bt.setTag(mark_tree);
 			}
 		}
 	}
@@ -369,8 +453,8 @@ public class BzdzkActivity extends SherlockFragmentActivity {
 		public void onClick(View v) {
 			switch (v.getId()) {
 			case R.id.un_mark:
-				
-
+				TreeBean bean = (TreeBean) v.getTag();
+				alert(bean, UN_MARK, R.string.confirm_un_mark);
 				break;
 			case R.id.extent:
 				mMapView.setOnTouchListener(touchListener);
@@ -379,7 +463,10 @@ public class BzdzkActivity extends SherlockFragmentActivity {
 			}
 
 		}
+
 	}
+
+	
 
 	private class AsyncQueryTask extends AsyncTask<Object, Void, FeatureSet> {
 

@@ -46,7 +46,6 @@ public class TreeFragment extends SherlockFragment implements OnRefreshListener2
 	private View view;
 	private PullToRefreshListView mPullRefreshListView;
 	private BzdzkActivity activity;
-	private static OnLayerListener _layerListener;
 
 	// private Context context;
 	private TreeAdapter treeAdapter;
@@ -160,13 +159,14 @@ public class TreeFragment extends SherlockFragment implements OnRefreshListener2
 		Log.e(TAG, position + "****" + id + "Click");
 		mPullRefreshListView.getRefreshableView().setItemChecked(position, true);
 
-		TreeBean tree = (TreeBean) treeAdapter.getItem(position - 1);
+		TreeBean tree = (TreeBean) parent.getAdapter().getItem(position);
 		if (canMark(tree)) {
 			activity.setSupportProgress(Window.PROGRESS_END);
 			activity.setSupportProgressBarIndeterminateVisibility(true);
 
 			String layer = tree.getId().split(",")[0];
-			activity.updateLayer(layer,tree);
+			activity.updateLayer(layer,tree,view);
+			Toast.makeText(activity, ((TextView)view.findViewById(R.id.name)).getText().toString(), 0).show();
 
 		}
 
@@ -204,7 +204,7 @@ public class TreeFragment extends SherlockFragment implements OnRefreshListener2
 
 		Log.e(TAG, position + "****" + id + "LongClick");
 
-		TreeBean tree = (TreeBean) treeAdapter.getItem(position - 1);
+		TreeBean tree = (TreeBean) arg0.getAdapter().getItem(position);
 		FragmentTransaction ft = getFragmentManager().beginTransaction();
 		String url = URLHelper.ZRQ + "?sjid=" + tree.getId();
 		TreeHelper.getInstance(activity, false).initTree(url);
@@ -212,12 +212,7 @@ public class TreeFragment extends SherlockFragment implements OnRefreshListener2
 		return true;
 	}
 
-	interface OnLayerListener {
-		void updateLayer(String layer);
-	}
+	
 
-	public static void setOnLayerListener(OnLayerListener layerListener) {
-		_layerListener = layerListener;
-	}
 
 }

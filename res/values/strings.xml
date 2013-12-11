@@ -12,8 +12,9 @@
     <string name="marking">标注中，请稍候</string>
     <string name="un_marking">取消标注中，请稍候</string>
     <string name="confirm_mark">确认标注？</string>
+    <string name="confirm_un_mark">确认取消标注？</string>
     <string name="positive">确定</string>
-    <string name="negate">取消</string>
+    <string name="negative">取消</string>
     
     
     
@@ -23,7 +24,7 @@
     <string name="title">提示</string>
     <string name="know">知道了</string>
     <string name="success">标注成功</string>
-    <string name="fasle">标注失败，请在试一遍</string>
+    <string name="fasle">标注失败，请再试一遍</string>
     <string name="un_mark_success">取消标注成功</string>
     <string name="un_mark_fasle">取消标注失败，请在试一遍</string>
     

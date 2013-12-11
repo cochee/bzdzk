@@ -1214,18 +1214,19 @@ containing a value of this type.
         public static final int abs__shareactionprovider_share_with_application=0x7f0a0007;
         public static final int app_name=0x7f0a0014;
         public static final int confirm_mark=0x7f0a001c;
+        public static final int confirm_un_mark=0x7f0a001d;
         public static final int extent=0x7f0a0017;
-        public static final int fasle=0x7f0a0024;
+        public static final int fasle=0x7f0a0025;
         public static final int hello=0x7f0a0013;
-        public static final int know=0x7f0a0022;
+        public static final int know=0x7f0a0023;
         public static final int loading=0x7f0a0019;
         public static final int marking=0x7f0a001a;
-        public static final int negate=0x7f0a001e;
-        public static final int no_child=0x7f0a0020;
+        public static final int negative=0x7f0a001f;
+        public static final int no_child=0x7f0a0021;
         /**  网络连接错误 
          */
-        public static final int online_error=0x7f0a001f;
-        public static final int positive=0x7f0a001d;
+        public static final int online_error=0x7f0a0020;
+        public static final int positive=0x7f0a001e;
         /**  Just use standard Pull Down String when pulling up. These can be set for languages which require it 
  Just use standard Pull Down String when pulling up. These can be set for languages which require it 
          */
@@ -1237,11 +1238,11 @@ containing a value of this type.
         public static final int pull_to_refresh_release_label=0x7f0a000e;
         public static final int query_hint=0x7f0a0016;
         public static final int query_name=0x7f0a0015;
-        public static final int success=0x7f0a0023;
-        public static final int title=0x7f0a0021;
+        public static final int success=0x7f0a0024;
+        public static final int title=0x7f0a0022;
         public static final int un_mark=0x7f0a0018;
-        public static final int un_mark_fasle=0x7f0a0026;
-        public static final int un_mark_success=0x7f0a0025;
+        public static final int un_mark_fasle=0x7f0a0027;
+        public static final int un_mark_success=0x7f0a0026;
         public static final int un_marking=0x7f0a001b;
     }
     public static final class style {
