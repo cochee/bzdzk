@@ -233,13 +233,11 @@ public class BzdzkActivity extends SherlockFragmentActivity {
 			if (uid != -1) {
 				g = mGraphicsLayer.getGraphic(uid);
 				if (g != null && g.getGeometry() != null) {
-					// fLayer.clearSelection();
 					Query q = new Query();
-					// optional
-					// q.setWhere("PROD_GAS='Yes'");
-					
 					
 					q.setReturnGeometry(true);
+					q.setOutFields(new String[] { "OBJECTID"});
+					
 					q.setInSpatialReference(mMapView.getSpatialReference());
 					q.setGeometry(g.getGeometry());
 					// String query_url = URL + "/3";
