@@ -17,10 +17,11 @@ import org.apache.http.util.EntityUtils;
 
 public class URLHelper {
 	
-	public static final String BASE = "http://192.168.1.101:8080/bzdzk/dzcj/mjcjAndroidTree";
+	public static final String BASE = "http://192.168.1.101:8080/bzdzk/dzcj/";
+	
 	
 	// 责任区
-	public static final String ZRQ = BASE+"";
+	public static final String ZRQ = BASE+"mjcjAndroidTree";
 	// 街路巷
 	public static final String JLX = "";
 	// 小区
@@ -64,18 +65,15 @@ public class URLHelper {
 
 	public static String queryStringForGet(String url) {
 		HttpGet httpGet = new HttpGet(url);
-		String result = null;
+		String result = "连接错误！";
 		try {
 			HttpResponse response = new CustomHttpClient().execute(httpGet);
 
 			if (response.getStatusLine().getStatusCode() == 200) {
 				result = EntityUtils.toString(response.getEntity(), "UTF-8");
-			}else{
-				result = "连接错误！";
 			}
 		} catch(Exception e) {
 			e.printStackTrace();
-			result = "连接错误！";
 		}
 
 		return result;		

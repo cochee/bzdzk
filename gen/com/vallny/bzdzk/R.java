@@ -1106,26 +1106,26 @@ containing a value of this type.
         public static final int disabled=0x7f050010;
         public static final int edit_query=0x7f050032;
         public static final int extent=0x7f050040;
-        public static final int fl_inner=0x7f050043;
-        public static final int flag=0x7f050049;
+        public static final int fl_inner=0x7f050044;
+        public static final int flag=0x7f05004a;
         public static final int flip=0x7f050018;
         public static final int gridview=0x7f050019;
         public static final int homeAsUp=0x7f050006;
         public static final int listMode=0x7f050002;
         public static final int manualOnly=0x7f050014;
-        public static final int map=0x7f050041;
-        public static final int menu_frame=0x7f050042;
-        public static final int name=0x7f05004a;
+        public static final int map=0x7f050042;
+        public static final int menu_frame=0x7f050043;
+        public static final int name=0x7f05004b;
         public static final int normal=0x7f050001;
         public static final int pullDownFromTop=0x7f050015;
         public static final int pullFromEnd=0x7f050012;
         public static final int pullFromStart=0x7f050011;
         public static final int pullUpFromBottom=0x7f050016;
-        public static final int pull_refresh_list=0x7f050048;
-        public static final int pull_to_refresh_image=0x7f050044;
-        public static final int pull_to_refresh_progress=0x7f050045;
-        public static final int pull_to_refresh_sub_text=0x7f050047;
-        public static final int pull_to_refresh_text=0x7f050046;
+        public static final int pull_refresh_list=0x7f050049;
+        public static final int pull_to_refresh_image=0x7f050045;
+        public static final int pull_to_refresh_progress=0x7f050046;
+        public static final int pull_to_refresh_sub_text=0x7f050048;
+        public static final int pull_to_refresh_text=0x7f050047;
         public static final int query=0x7f05003f;
         public static final int rotate=0x7f050017;
         public static final int scrollview=0x7f05001b;
@@ -1133,6 +1133,7 @@ containing a value of this type.
         public static final int showHome=0x7f050005;
         public static final int showTitle=0x7f050007;
         public static final int tabMode=0x7f050003;
+        public static final int un_mark=0x7f050041;
         public static final int useLogo=0x7f050004;
         public static final int webview=0x7f05001a;
         public static final int wrap_content=0x7f050000;
@@ -1212,13 +1213,19 @@ containing a value of this type.
          */
         public static final int abs__shareactionprovider_share_with_application=0x7f0a0007;
         public static final int app_name=0x7f0a0014;
+        public static final int confirm_mark=0x7f0a001c;
         public static final int extent=0x7f0a0017;
+        public static final int fasle=0x7f0a0024;
         public static final int hello=0x7f0a0013;
-        public static final int know=0x7f0a001b;
-        public static final int loading=0x7f0a0018;
+        public static final int know=0x7f0a0022;
+        public static final int loading=0x7f0a0019;
+        public static final int marking=0x7f0a001a;
+        public static final int negate=0x7f0a001e;
+        public static final int no_child=0x7f0a0020;
         /**  网络连接错误 
          */
-        public static final int online_error=0x7f0a0019;
+        public static final int online_error=0x7f0a001f;
+        public static final int positive=0x7f0a001d;
         /**  Just use standard Pull Down String when pulling up. These can be set for languages which require it 
  Just use standard Pull Down String when pulling up. These can be set for languages which require it 
          */
@@ -1230,7 +1237,12 @@ containing a value of this type.
         public static final int pull_to_refresh_release_label=0x7f0a000e;
         public static final int query_hint=0x7f0a0016;
         public static final int query_name=0x7f0a0015;
-        public static final int title=0x7f0a001a;
+        public static final int success=0x7f0a0023;
+        public static final int title=0x7f0a0021;
+        public static final int un_mark=0x7f0a0018;
+        public static final int un_mark_fasle=0x7f0a0026;
+        public static final int un_mark_success=0x7f0a0025;
+        public static final int un_marking=0x7f0a001b;
     }
     public static final class style {
         public static final int Sherlock___TextAppearance_Small=0x7f0b0046;

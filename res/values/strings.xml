@@ -5,14 +5,26 @@
     <string name="query_name">查询</string>
     <string name="query_hint">输入地名</string>
     <string name="extent">选取范围</string>
+    <string name="un_mark">取消标注</string>
     
     
-    <string name="loading">加载中，请稍候</string>
+    <string name="loading">加载数据中，请稍候</string>
+    <string name="marking">标注中，请稍候</string>
+    <string name="un_marking">取消标注中，请稍候</string>
+    <string name="confirm_mark">确认标注？</string>
+    <string name="positive">确定</string>
+    <string name="negate">取消</string>
+    
     
     
     <!-- 网络连接错误 -->
     <string name="online_error">网络连接错误，请检查网络是否连接</string>
+    <string name="no_child">没有下一级</string>
     <string name="title">提示</string>
     <string name="know">知道了</string>
+    <string name="success">标注成功</string>
+    <string name="fasle">标注失败，请在试一遍</string>
+    <string name="un_mark_success">取消标注成功</string>
+    <string name="un_mark_fasle">取消标注失败，请在试一遍</string>
     
 </resources>

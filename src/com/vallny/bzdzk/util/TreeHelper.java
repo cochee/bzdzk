@@ -19,6 +19,7 @@ public class TreeHelper {
 
 	public final static int IS_ONLINE_TRUE = 1;
 	public final static int IS_ONLINE_FALSE = 2;
+	public final static int IS_NO_CHILD = 3;
 
 	private static Handler handler;
 	private static ProgressDialog progress;
@@ -39,12 +40,15 @@ public class TreeHelper {
 		new Thread() {
 			public void run() {
 				String json = URLHelper.queryStringForGet(url);
-				if (TextUtils.isEmpty(json) || json.equals("连接错误！")) {
-					Message msg = handler.obtainMessage(TreeHelper.IS_ONLINE_FALSE);
+				if (TextUtils.isEmpty(json)) {
+					Message msg = handler.obtainMessage(IS_NO_CHILD);
+					msg.sendToTarget();
+				} else if (json.equals("连接错误！")) {
+					Message msg = handler.obtainMessage(IS_ONLINE_FALSE);
 					msg.sendToTarget();
 				} else {
 					ArrayList<TreeBean> list = (ArrayList<TreeBean>) JSONHelper.JSON2List(json);
-					Message msg = handler.obtainMessage(TreeHelper.IS_ONLINE_TRUE, list);
+					Message msg = handler.obtainMessage(IS_ONLINE_TRUE, list);
 					msg.sendToTarget();
 				}
 			};
@@ -62,9 +66,10 @@ public class TreeHelper {
 					switch (msg.what) {
 					case IS_ONLINE_TRUE:
 						FragmentTransaction ft = activity.getSupportFragmentManager().beginTransaction();
-						
-//						TreeFragment fragment= 	new TreeFragment((ArrayList<TreeBean>) msg.obj);
-						
+
+						// TreeFragment fragment= new
+						// TreeFragment((ArrayList<TreeBean>) msg.obj);
+
 						ft.replace(R.id.menu_frame, new TreeFragment((ArrayList<TreeBean>) msg.obj));
 						if (!_isFirst)
 							ft.addToBackStack(null);
@@ -72,6 +77,9 @@ public class TreeHelper {
 						break;
 					case IS_ONLINE_FALSE:
 						new AlertDialog.Builder(activity).setTitle(R.string.title).setMessage(R.string.online_error).setPositiveButton(R.string.know, null).create().show();
+						break;
+					case IS_NO_CHILD:
+						new AlertDialog.Builder(activity).setTitle(R.string.title).setMessage(R.string.no_child).setPositiveButton(R.string.know, null).create().show();
 						break;
 					}
 					if (progress != null && progress.isShowing()) {
@@ -83,8 +91,6 @@ public class TreeHelper {
 		return tree;
 	}
 
-	
-	
 	public static void release() {
 		tree = null;
 		handler = null;

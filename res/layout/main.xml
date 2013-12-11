@@ -24,10 +24,17 @@
 
         <Button
             android:id="@+id/extent"
-            android:visibility="gone"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/extent" />
+            android:text="@string/extent"
+            android:visibility="gone" />
+
+        <Button
+            android:id="@+id/un_mark"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/un_mark"
+            android:visibility="gone" />
     </LinearLayout>
 
     <com.esri.android.map.MapView

@@ -40,4 +40,21 @@ public class JSONHelper {
 		}
 		return list;
 	}
+
+	/**
+	 * 获取图层名称
+	 * @param json
+	 * @return
+	 */
+	public static String getTcmcFromJson(String json) {
+		try {
+			JSONArray jsonArray = new JSONArray(json);
+			JSONObject item = jsonArray.getJSONObject(0); // 每条记录又由几个Object对象组成
+			return item.getString("tcmc");
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
 }

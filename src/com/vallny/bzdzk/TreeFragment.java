@@ -166,7 +166,7 @@ public class TreeFragment extends SherlockFragment implements OnRefreshListener2
 			activity.setSupportProgressBarIndeterminateVisibility(true);
 
 			String layer = tree.getId().split(",")[0];
-			activity.updateLayer(layer);
+			activity.updateLayer(layer,tree);
 
 		}
 
@@ -206,7 +206,7 @@ public class TreeFragment extends SherlockFragment implements OnRefreshListener2
 
 		TreeBean tree = (TreeBean) treeAdapter.getItem(position - 1);
 		FragmentTransaction ft = getFragmentManager().beginTransaction();
-		String url = URLHelper.BASE + "?sjid=" + tree.getId();
+		String url = URLHelper.ZRQ + "?sjid=" + tree.getId();
 		TreeHelper.getInstance(activity, false).initTree(url);
 
 		return true;

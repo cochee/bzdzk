@@ -14,15 +14,14 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.Toast;
 
-import com.actionbarsherlock.app.SherlockActivity;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.actionbarsherlock.view.MenuItem;
 import com.esri.android.map.GraphicsLayer;
@@ -47,8 +46,8 @@ import com.esri.core.tasks.SpatialRelationship;
 import com.esri.core.tasks.ags.query.Query;
 import com.esri.core.tasks.ags.query.QueryTask;
 import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
-import com.vallny.bzdzk.TreeFragment.OnLayerListener;
 import com.vallny.bzdzk.bean.TreeBean;
+import com.vallny.bzdzk.util.JSONHelper;
 import com.vallny.bzdzk.util.TreeHelper;
 import com.vallny.bzdzk.util.URLHelper;
 
@@ -58,6 +57,7 @@ public class BzdzkActivity extends SherlockFragmentActivity {
 	private ArcGISDynamicMapServiceLayer dLayer;
 	private Button query_bt;
 	private Button extent_bt;
+	private Button un_mark_bt;
 	private GraphicsLayer mGraphicsLayer;
 	private SimpleFillSymbol sfs;
 
@@ -70,9 +70,10 @@ public class BzdzkActivity extends SherlockFragmentActivity {
 	private ArrayList<TreeBean> list;
 
 	private String mark_url;
+	private TreeBean mark_tree;
 	private final static String URL = "http://192.168.1.101:6080/arcgis/rest/services/PGIS/bzdzk/MapServer";
-//	 private final static String URL =
-//	 "http://192.168.1.101:6080/arcgis/rest/services/PGIS/XZQH/MapServer";
+	// private final static String URL =
+	// "http://192.168.1.101:6080/arcgis/rest/services/PGIS/XZQH/MapServer";
 	private final static String TAG = "com.vallny.bzdzk";
 
 	public final static double SEARCH_RADIUS = 5;
@@ -101,10 +102,10 @@ public class BzdzkActivity extends SherlockFragmentActivity {
 		menu.attachToActivity(this, SlidingMenu.SLIDING_WINDOW);
 		menu.setMenu(R.layout.menu_frame);
 
-		TreeHelper.getInstance(this, true).initTree(URLHelper.BASE);
+		TreeHelper.getInstance(this, true).initTree(URLHelper.ZRQ);
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 		setSupportProgress(Window.PROGRESS_END);
-		
+
 	}
 
 	@Override
@@ -123,6 +124,7 @@ public class BzdzkActivity extends SherlockFragmentActivity {
 		// condition = (EditText) findViewById(R.id.condition);
 		query_bt = (Button) findViewById(R.id.query);
 		extent_bt = (Button) findViewById(R.id.extent);
+		un_mark_bt = (Button) findViewById(R.id.un_mark);
 
 		mMapView.setOnStatusChangedListener(new OnStatusChangedListener() {
 			public void onStatusChanged(Object source, STATUS status) {
@@ -133,6 +135,7 @@ public class BzdzkActivity extends SherlockFragmentActivity {
 		ButtonClickListener bc = new ButtonClickListener();
 		query_bt.setOnClickListener(bc);
 		extent_bt.setOnClickListener(bc);
+		un_mark_bt.setOnClickListener(bc);
 		touchListener = new MyTouchListener(this, mMapView);
 		defaulttouchListener = new MapOnTouchListener(this, mMapView);
 
@@ -148,14 +151,12 @@ public class BzdzkActivity extends SherlockFragmentActivity {
 				if (uids != null && uids.length > 0) {
 					int targetId = uids[0];
 					Graphic gr = mGraphicsLayer.getGraphic(targetId);
-					Map<String,Object> m = gr.getAttributes();
-					
-					Log.e(TAG,m .get("OBJECTID")+"%%%%%%%%%%%%%");
-					for(Entry<String, Object> entry:m.entrySet()){
-						Log.e(TAG, entry.getKey()+"**********"+entry.getValue());
-					}
-					
-					Toast.makeText(BzdzkActivity.this, "1111111", 0).show();
+					Map<String, Object> m = gr.getAttributes();
+					Point pt = mMapView.toMapPoint(x, y);
+					// Toast.makeText(BzdzkActivity.this, "X:" + pt.getX() +
+					// "Y:" + pt.getY() + "obj" + m.get("OBJECTID"), 0).show();
+					new AsyncMarkTask().execute(URLHelper.BASE + "bz", m.get("OBJECTID") + "", pt.getX() + "," + pt.getY());
+
 				} else {
 					Toast.makeText(BzdzkActivity.this, "22222222", 0).show();
 				}
@@ -163,36 +164,139 @@ public class BzdzkActivity extends SherlockFragmentActivity {
 		});
 	}
 
-	
-	public Button getExtent_bt(){
-		return extent_bt;
-	}
-	public void setMark_url(String mark_url){
-		this.mark_url = mark_url;
-	}
-	
-	
-		public void updateLayer(String layer) {
-			if ("xq".equals(layer)) {
-				mark_url = "/13";
-				extent_bt.setVisibility(View.VISIBLE);
-			} else if ("mph".equals(layer)) {
-				mark_url = "/12";
-				extent_bt.setVisibility(View.VISIBLE);
-			} else if ("jzw".equals(layer)) {
-				mark_url = "/11";
-				extent_bt.setVisibility(View.VISIBLE);
-			} else if ("dy".equals(layer)) {
-				mark_url = "/11";
-				extent_bt.setVisibility(View.VISIBLE);
-			} else if ("fj".equals(layer)) {
-				mark_url = "/11";
-				extent_bt.setVisibility(View.VISIBLE);
+	class AsyncUnMarkTask extends AsyncTask<String, Void, String> {
+		private ProgressDialog progress;
+
+		@Override
+		protected void onPreExecute() {
+			super.onPreExecute();
+
+			progress = new ProgressDialog(BzdzkActivity.this);
+			progress.setCancelable(false);
+			progress.setCanceledOnTouchOutside(false);
+			progress.setMessage(BzdzkActivity.this.getString(R.string.un_marking));
+			progress.show();
+		}
+		
+		@Override
+		protected String doInBackground(String... params) {
+			return 	URLHelper.queryStringForGet(URLHelper.BASE+params[0]);
+		}
+		
+		@Override
+		protected void onPostExecute(String result) {
+			super.onPostExecute(result);
+			if ("success".equals(result)) {
+				new AlertDialog.Builder(BzdzkActivity.this).setTitle(R.string.title).setMessage(R.string.un_mark_success).setPositiveButton(R.string.know, null).create().show();
 			} else {
-				extent_bt.setVisibility(View.GONE);
+				new AlertDialog.Builder(BzdzkActivity.this).setTitle(R.string.title).setMessage(R.string.un_mark_fasle).setPositiveButton(R.string.know, null).create().show();
+			}
+			if (progress != null && progress.isShowing()) {
+				progress.dismiss();
 			}
 
-	
+		}
+		
+	}
+
+	class AsyncMarkTask extends AsyncTask<String, Void, String> {
+
+		private ProgressDialog progress;
+
+		@Override
+		protected void onPreExecute() {
+			super.onPreExecute();
+
+			progress = new ProgressDialog(BzdzkActivity.this);
+			progress.setCancelable(false);
+			progress.setCanceledOnTouchOutside(false);
+			progress.setMessage(BzdzkActivity.this.getString(R.string.marking));
+			progress.show();
+		}
+
+		@Override
+		protected String doInBackground(String... params) {
+			String SUCCESS = null;
+			if (mark_tree != null) {
+
+				String json = URLHelper.queryStringForGet(URLHelper.BASE + "getMapconfig?zhid=" + mark_tree.getId());
+				String tcmc = JSONHelper.getTcmcFromJson(json);
+
+				String mark_url = params[0] + "?zhid=" + mark_tree.getId() + "&tcid=" + params[1] + "&tcmc=" + tcmc + "&zxPoint=" + params[1];
+
+				SUCCESS = URLHelper.queryStringForGet(mark_url);
+				if ("success".equals(SUCCESS)) {
+					try {
+						Query q = new Query();
+						q.setReturnGeometry(true);
+						q.setOutFields(new String[] { "OBJECTID" });
+						q.setWhere("OBJECTID=" + params[1]);
+						q.setInSpatialReference(mMapView.getSpatialReference());
+						String query_url = URL + BzdzkActivity.this.mark_url;
+						q.setSpatialRelationship(SpatialRelationship.INTERSECTS);
+						QueryTask queryTask = new QueryTask(query_url);
+						GraphicsLayer graphicsLayer = getGraphicLayer();
+						FeatureSet fs = queryTask.execute(q);
+						if (fs != null && graphicsLayer.isInitialized() && graphicsLayer.isVisible()) {
+							Graphic[] grs = fs.getGraphics();
+							if (grs.length > 0) {
+								SimpleFillSymbol symbol = new SimpleFillSymbol(Color.RED);
+								graphicsLayer.setRenderer(new SimpleRenderer(symbol));
+								graphicsLayer.removeAll();
+								graphicsLayer.addGraphics(grs);
+							}
+						}
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+
+					return "success";
+				}
+			}
+			return SUCCESS;
+		}
+
+		@Override
+		protected void onPostExecute(String result) {
+			super.onPostExecute(result);
+			if ("success".equals(result)) {
+				new AlertDialog.Builder(BzdzkActivity.this).setTitle(R.string.title).setMessage(R.string.success).setPositiveButton(R.string.know, null).create().show();
+			} else {
+				new AlertDialog.Builder(BzdzkActivity.this).setTitle(R.string.title).setMessage(R.string.fasle).setPositiveButton(R.string.know, null).create().show();
+			}
+			if (progress != null && progress.isShowing()) {
+				progress.dismiss();
+			}
+
+		}
+	}
+
+	public void updateLayer(String layer, TreeBean tree) {
+
+		boolean canMark = true;
+		mark_tree = tree;
+		
+		if ("xq".equals(layer)) {
+			mark_url = "/13";
+		} else if ("mph".equals(layer)) {
+			mark_url = "/12";
+		} else if ("jzw".equals(layer)) {
+			mark_url = "/11";
+		} else if ("dy".equals(layer)) {
+			mark_url = "/11";
+		} else if ("fj".equals(layer)) {
+			mark_url = "/11";
+		} else {
+			canMark = false;
+			extent_bt.setVisibility(View.GONE);
+			mark_tree = null;
+		}
+		if (canMark) {
+			extent_bt.setVisibility(View.VISIBLE);
+			if (mark_tree.getMark()) {
+				un_mark_bt.setVisibility(View.VISIBLE);
+			}
+		}
 	}
 
 	class MyTouchListener extends MapOnTouchListener {
@@ -234,18 +338,15 @@ public class BzdzkActivity extends SherlockFragmentActivity {
 				g = mGraphicsLayer.getGraphic(uid);
 				if (g != null && g.getGeometry() != null) {
 					Query q = new Query();
-					
+
 					q.setReturnGeometry(true);
-					q.setOutFields(new String[] { "OBJECTID"});
-					
+					q.setOutFields(new String[] { "OBJECTID" });
+
 					q.setInSpatialReference(mMapView.getSpatialReference());
 					q.setGeometry(g.getGeometry());
 					// String query_url = URL + "/3";
 					q.setSpatialRelationship(SpatialRelationship.INTERSECTS);
 					new AsyncQueryTask().execute(q, URL + mark_url);
-//					new AsyncQueryTask().execute(q, URL+"/3");
-
-					// fLayer.selectFeatures(q, SELECTION_METHOD.NEW, callback);
 				}
 				mGraphicsLayer.removeAll();
 
@@ -267,14 +368,8 @@ public class BzdzkActivity extends SherlockFragmentActivity {
 		@Override
 		public void onClick(View v) {
 			switch (v.getId()) {
-			case R.id.query:
-				// String keyQuery = condition.getText().toString();
-				// Query query = new Query();
-				// query.setWhere("MC like '%" + keyQuery + "%'");
-				// query.setReturnGeometry(true);
-				// String query_url = URL + "/4";
-				// new AsyncQueryTask().execute(new Object[] { query, query_url
-				// });
+			case R.id.un_mark:
+				
 
 				break;
 			case R.id.extent:
@@ -302,7 +397,7 @@ public class BzdzkActivity extends SherlockFragmentActivity {
 			Query query = (Query) queryParams[0];
 			String queryUrl = (String) queryParams[1];
 			QueryTask queryTask = new QueryTask(queryUrl);
-			
+
 			FeatureSet fs = null;
 			try {
 				fs = queryTask.execute(query);
@@ -324,16 +419,8 @@ public class BzdzkActivity extends SherlockFragmentActivity {
 					graphicsLayer.setRenderer(new SimpleRenderer(symbol));
 					graphicsLayer.removeAll();
 					graphicsLayer.addGraphics(grs);
-				
-				
-					Map<String,Object> m = grs[0].getAttributes();
-					
-					Log.i(TAG,m .get("OBJECTID")+"%%%%%%%%%%%%%");
-					for(Entry<String, Object> entry:m.entrySet()){
-						Log.i(TAG, entry.getKey()+"**********"+entry.getValue());
-					}
 
-					message = (grs.length == 1 ? "1 result has " : Integer.toString(grs.length) + " results have ") + "come back"+m .get("OBJECTID");
+					message = (grs.length == 1 ? "1 result has " : Integer.toString(grs.length) + " results have ") + "come back";
 				}
 
 			}
