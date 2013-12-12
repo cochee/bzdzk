@@ -16,12 +16,11 @@ import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
 
 public class URLHelper {
-	
+
 	public static final String BASE = "http://192.168.1.101:8080/bzdzk/dzcj/";
-	
-	
+
 	// 责任区
-	public static final String ZRQ = BASE+"mjcjAndroidTree";
+	public static final String ZRQ = BASE + "mjcjAndroidTree";
 	// 街路巷
 	public static final String JLX = "";
 	// 小区
@@ -36,11 +35,10 @@ public class URLHelper {
 	public static final String DY = "";
 	// 房间
 	public static final String FJ = "";
-	
-	
-	public static String queryStringForPost(String url, Map<String, String> params) throws HttpException {
+
+	public static String queryStringForPost(String url, Map<String, String> params) {
 		List<NameValuePair> pairs = new ArrayList<NameValuePair>();
-		String result = null;
+		String result = "连接错误！";
 		for (Map.Entry<String, String> entry : params.entrySet()) {
 			pairs.add(new BasicNameValuePair(entry.getKey(), entry.getValue()));
 		}
@@ -52,14 +50,9 @@ public class URLHelper {
 			if (response.getStatusLine().getStatusCode() == 200) {
 				result = EntityUtils.toString(response.getEntity(), "UTF-8");
 			}
-		}  catch (ClientProtocolException e) {
+		} catch (Exception e) {
 			e.printStackTrace();
-			result = "连接错误！";
-		} catch (IOException e) {
-			e.printStackTrace();
-			result = "连接错误！";
 		}
-
 		return result;
 	}
 
@@ -72,12 +65,11 @@ public class URLHelper {
 			if (response.getStatusLine().getStatusCode() == 200) {
 				result = EntityUtils.toString(response.getEntity(), "UTF-8");
 			}
-		} catch(Exception e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 
-		return result;		
+		return result;
 	}
-
 
 }

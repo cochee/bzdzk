@@ -11,19 +11,20 @@
         android:layout_width="fill_parent"
         android:layout_height="fill_parent" />
 
-    <LinearLayout
+    <Button
+        android:id="@+id/mark"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content" >
+        android:layout_height="wrap_content"
+        android:text="@string/un_mark"
+        android:visibility="gone" />
 
-        
-           <Button
-            android:id="@+id/un_mark"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/un_mark"
-            android:visibility="gone" />
-
-     
-    </LinearLayout>
+    <ProgressBar
+        android:id="@+id/progressBar"
+        android:visibility="gone"
+        style="?android:attr/progressBarStyleLarge"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentBottom="true" />
 
 </RelativeLayout>

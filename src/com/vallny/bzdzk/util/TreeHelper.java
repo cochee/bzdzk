@@ -3,6 +3,7 @@ package com.vallny.bzdzk.util;
 import java.util.ArrayList;
 
 import com.actionbarsherlock.app.SherlockFragmentActivity;
+import com.vallny.bzdzk.BzdzkActivity;
 import com.vallny.bzdzk.R;
 import com.vallny.bzdzk.TreeFragment;
 import com.vallny.bzdzk.bean.TreeBean;
@@ -24,7 +25,7 @@ public class TreeHelper {
 	private static Handler handler;
 	private static ProgressDialog progress;
 
-	private static SherlockFragmentActivity _activity;
+	private static BzdzkActivity _activity;
 	private static boolean _isFirst;
 	private static TreeBean _parent;
 	private static TreeHelper tree;
@@ -41,10 +42,10 @@ public class TreeHelper {
 		new Thread() {
 			public void run() {
 				String json = URLHelper.queryStringForGet(url);
-				if (TextUtils.isEmpty(json)) {
+				if (!TextUtils.isEmpty(json) && "[]".equals(json)) {
 					Message msg = handler.obtainMessage(IS_NO_CHILD);
 					msg.sendToTarget();
-				} else if (json.equals("连接错误！")) {
+				} else if (!TextUtils.isEmpty(json) && json.equals("连接错误！")) {
 					Message msg = handler.obtainMessage(IS_ONLINE_FALSE);
 					msg.sendToTarget();
 				} else {
@@ -57,7 +58,7 @@ public class TreeHelper {
 	}
 
 	public static TreeHelper getInstance(SherlockFragmentActivity activity, boolean isFirst, TreeBean parent) {
-		_activity = activity;
+		_activity = (BzdzkActivity) activity;
 		_isFirst = isFirst;
 		_parent = parent;
 		if (tree == null) {
@@ -65,12 +66,13 @@ public class TreeHelper {
 			handler = new Handler() {
 				@SuppressWarnings("unchecked")
 				public void handleMessage(Message msg) {
+					_activity.removeGraphic();
 					switch (msg.what) {
 					case IS_ONLINE_TRUE:
 						FragmentTransaction ft = _activity.getSupportFragmentManager().beginTransaction();
 						TreeFragment fragment = new TreeFragment((ArrayList<TreeBean>) msg.obj);
 						fragment.setParent_tree(_parent);
-						ft.replace(R.id.menu_frame,fragment, _parent==null?"":_parent.getId());
+						ft.replace(R.id.menu_frame, fragment, _parent == null ? "" : _parent.getId());
 						if (!_isFirst)
 							ft.addToBackStack(null);
 						ft.commit();

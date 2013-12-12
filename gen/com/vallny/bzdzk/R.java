@@ -1050,15 +1050,16 @@ containing a value of this type.
         public static final int abs__textfield_searchview_right_holo_dark=0x7f02006d;
         public static final int abs__textfield_searchview_right_holo_light=0x7f02006e;
         public static final int abs__toast_frame=0x7f02006f;
-        public static final int default_ptr_flip=0x7f020070;
-        public static final int default_ptr_rotate=0x7f020071;
-        public static final int ic_launcher=0x7f020072;
-        public static final int indicator_arrow=0x7f020073;
-        public static final int indicator_bg_bottom=0x7f020074;
-        public static final int indicator_bg_top=0x7f020075;
-        public static final int item_selecter=0x7f020076;
-        public static final int list_item_down=0x7f020077;
-        public static final int shadow=0x7f020078;
+        public static final int background=0x7f020070;
+        public static final int default_ptr_flip=0x7f020071;
+        public static final int default_ptr_rotate=0x7f020072;
+        public static final int ic_launcher=0x7f020073;
+        public static final int indicator_arrow=0x7f020074;
+        public static final int indicator_bg_bottom=0x7f020075;
+        public static final int indicator_bg_top=0x7f020076;
+        public static final int item_selecter=0x7f020077;
+        public static final int list_item_down=0x7f020078;
+        public static final int shadow=0x7f020079;
     }
     public static final class id {
         public static final int abs__action_bar=0x7f05002c;
@@ -1104,34 +1105,41 @@ containing a value of this type.
         public static final int disableHome=0x7f050009;
         public static final int disabled=0x7f050010;
         public static final int edit_query=0x7f050032;
-        public static final int fl_inner=0x7f050041;
-        public static final int flag=0x7f050047;
+        public static final int fl_inner=0x7f050048;
+        public static final int flag=0x7f05004e;
         public static final int flip=0x7f050018;
         public static final int gridview=0x7f050019;
         public static final int homeAsUp=0x7f050006;
         public static final int listMode=0x7f050002;
+        public static final int login=0x7f050043;
+        public static final int login_div=0x7f05003f;
+        public static final int login_linear=0x7f05003e;
         public static final int manualOnly=0x7f050014;
-        public static final int map=0x7f05003e;
-        public static final int menu_frame=0x7f050040;
-        public static final int name=0x7f050048;
+        public static final int map=0x7f050044;
+        public static final int mark=0x7f050045;
+        public static final int menu_frame=0x7f050047;
+        public static final int name=0x7f05004f;
         public static final int normal=0x7f050001;
+        public static final int password=0x7f050041;
+        public static final int progressBar=0x7f050046;
         public static final int pullDownFromTop=0x7f050015;
         public static final int pullFromEnd=0x7f050012;
         public static final int pullFromStart=0x7f050011;
         public static final int pullUpFromBottom=0x7f050016;
-        public static final int pull_refresh_list=0x7f050046;
-        public static final int pull_to_refresh_image=0x7f050042;
-        public static final int pull_to_refresh_progress=0x7f050043;
-        public static final int pull_to_refresh_sub_text=0x7f050045;
-        public static final int pull_to_refresh_text=0x7f050044;
+        public static final int pull_refresh_list=0x7f05004d;
+        public static final int pull_to_refresh_image=0x7f050049;
+        public static final int pull_to_refresh_progress=0x7f05004a;
+        public static final int pull_to_refresh_sub_text=0x7f05004c;
+        public static final int pull_to_refresh_text=0x7f05004b;
         public static final int rotate=0x7f050017;
+        public static final int save=0x7f050042;
         public static final int scrollview=0x7f05001b;
         public static final int showCustom=0x7f050008;
         public static final int showHome=0x7f050005;
         public static final int showTitle=0x7f050007;
         public static final int tabMode=0x7f050003;
-        public static final int un_mark=0x7f05003f;
         public static final int useLogo=0x7f050004;
+        public static final int username=0x7f050040;
         public static final int webview=0x7f05001a;
         public static final int wrap_content=0x7f050000;
     }
@@ -1160,14 +1168,15 @@ containing a value of this type.
         public static final int abs__search_dropdown_item_icons_2line=0x7f030012;
         public static final int abs__search_view=0x7f030013;
         public static final int abs__simple_dropdown_hint=0x7f030014;
-        public static final int main=0x7f030015;
-        public static final int menu_frame=0x7f030016;
-        public static final int pull_to_refresh_header_horizontal=0x7f030017;
-        public static final int pull_to_refresh_header_vertical=0x7f030018;
-        public static final int sherlock_spinner_dropdown_item=0x7f030019;
-        public static final int sherlock_spinner_item=0x7f03001a;
-        public static final int tree_list=0x7f03001b;
-        public static final int tree_list_item=0x7f03001c;
+        public static final int login=0x7f030015;
+        public static final int main=0x7f030016;
+        public static final int menu_frame=0x7f030017;
+        public static final int pull_to_refresh_header_horizontal=0x7f030018;
+        public static final int pull_to_refresh_header_vertical=0x7f030019;
+        public static final int sherlock_spinner_dropdown_item=0x7f03001a;
+        public static final int sherlock_spinner_item=0x7f03001b;
+        public static final int tree_list=0x7f03001c;
+        public static final int tree_list_item=0x7f03001d;
     }
     public static final class string {
         /**  Content description for the action bar "home" affordance. [CHAR LIMIT=NONE] 
@@ -1209,21 +1218,23 @@ containing a value of this type.
         /**  Description of a share target (both in the list of such or the default share button) in a ShareActionProvider (share UI). [CHAR LIMIT=NONE] 
          */
         public static final int abs__shareactionprovider_share_with_application=0x7f0a0007;
-        public static final int app_name=0x7f0a0014;
-        public static final int confirm_mark=0x7f0a001c;
-        public static final int confirm_un_mark=0x7f0a001d;
-        public static final int extent=0x7f0a0017;
-        public static final int fasle=0x7f0a0025;
-        public static final int hello=0x7f0a0013;
-        public static final int know=0x7f0a0023;
-        public static final int loading=0x7f0a0019;
-        public static final int marking=0x7f0a001a;
-        public static final int negative=0x7f0a001f;
-        public static final int no_child=0x7f0a0021;
+        public static final int app_name=0x7f0a0013;
+        public static final int confirm_mark=0x7f0a001b;
+        public static final int confirm_un_mark=0x7f0a001c;
+        public static final int extent=0x7f0a0016;
+        public static final int fasle=0x7f0a0024;
+        public static final int is_empty=0x7f0a002e;
+        public static final int know=0x7f0a0022;
+        public static final int loading=0x7f0a0018;
+        public static final int login=0x7f0a002d;
+        public static final int marking=0x7f0a0019;
+        public static final int negative=0x7f0a001e;
+        public static final int no_child=0x7f0a0020;
         /**  网络连接错误 
          */
-        public static final int online_error=0x7f0a0020;
-        public static final int positive=0x7f0a001e;
+        public static final int online_error=0x7f0a001f;
+        public static final int password=0x7f0a002a;
+        public static final int positive=0x7f0a001d;
         /**  Just use standard Pull Down String when pulling up. These can be set for languages which require it 
  Just use standard Pull Down String when pulling up. These can be set for languages which require it 
          */
@@ -1233,14 +1244,22 @@ containing a value of this type.
         public static final int pull_to_refresh_pull_label=0x7f0a000d;
         public static final int pull_to_refresh_refreshing_label=0x7f0a000f;
         public static final int pull_to_refresh_release_label=0x7f0a000e;
-        public static final int query_hint=0x7f0a0016;
-        public static final int query_name=0x7f0a0015;
-        public static final int success=0x7f0a0024;
-        public static final int title=0x7f0a0022;
-        public static final int un_mark=0x7f0a0018;
+        public static final int query_hint=0x7f0a0015;
+        public static final int query_name=0x7f0a0014;
+        public static final int save=0x7f0a002c;
+        public static final int show_graphic_fasle=0x7f0a0025;
+        public static final int success=0x7f0a0023;
+        public static final int system_error=0x7f0a002f;
+        public static final int title=0x7f0a0021;
+        public static final int un_mark=0x7f0a0017;
         public static final int un_mark_fasle=0x7f0a0027;
         public static final int un_mark_success=0x7f0a0026;
-        public static final int un_marking=0x7f0a001b;
+        public static final int un_marking=0x7f0a001a;
+        /**  登录 
+         */
+        public static final int username=0x7f0a0028;
+        public static final int write_password=0x7f0a002b;
+        public static final int write_username=0x7f0a0029;
     }
     public static final class style {
         public static final int Sherlock___TextAppearance_Small=0x7f0b0046;

@@ -62,7 +62,7 @@ public class TreeFragment extends SherlockFragment implements OnRefreshListener2
 	private Boolean isOnline;
 
 	private String url;
-	
+
 	private TreeBean parent_tree;
 	private TreeBean curent_tree;
 
@@ -166,20 +166,14 @@ public class TreeFragment extends SherlockFragment implements OnRefreshListener2
 		TreeBean tree = (TreeBean) parent.getAdapter().getItem(position);
 		setCurent_tree(tree);
 		if (canMark(tree)) {
-			activity.setSupportProgress(Window.PROGRESS_END);
-			activity.setSupportProgressBarIndeterminateVisibility(true);
-
 			String layer = tree.getId().split(",")[0];
-			activity.updateLayer(layer,tree,view);
-//			Toast.makeText(activity, ((TextView)view.findViewById(R.id.name)).getText().toString(), 0).show();
-
+			activity.updateLayer(layer, tree, view);
 		}
-
 	}
 
 	private boolean canMark(TreeBean tree) {
 		String type = tree.getId().split(",")[0];
-		Log.e(TAG,type);
+		Log.e(TAG, type);
 		return !(type.equals("zrq") || type.equals("jlx") || type.equals("zrc"));
 	}
 
@@ -211,7 +205,7 @@ public class TreeFragment extends SherlockFragment implements OnRefreshListener2
 		activity.hiddenButton();
 		TreeBean tree = (TreeBean) arg0.getAdapter().getItem(position);
 		String url = URLHelper.ZRQ + "?sjid=" + tree.getId();
-		TreeHelper.getInstance(activity, false,tree).initTree(url);
+		TreeHelper.getInstance(activity, false, tree).initTree(url);
 
 		return true;
 	}
@@ -231,7 +225,5 @@ public class TreeFragment extends SherlockFragment implements OnRefreshListener2
 	public void setCurent_tree(TreeBean curent_tree) {
 		this.curent_tree = curent_tree;
 	}
-
-
 
 }

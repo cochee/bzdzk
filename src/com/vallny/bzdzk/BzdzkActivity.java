@@ -1,11 +1,14 @@
 package com.vallny.bzdzk;
 
 import java.util.Map;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Color;
 import android.location.Location;
 import android.location.LocationListener;
@@ -18,6 +21,7 @@ import android.view.View;
 import android.view.Window;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.actionbarsherlock.app.SherlockFragmentActivity;
@@ -53,8 +57,9 @@ public class BzdzkActivity extends SherlockFragmentActivity {
 
 	private MapView mMapView;
 	private ArcGISDynamicMapServiceLayer dLayer;
-	// private Button extent_bt;
-	private Button un_mark_bt;
+
+	private Button mark_bt;
+	private ProgressBar progressBar;
 	private GraphicsLayer mGraphicsLayer;
 	private SimpleFillSymbol sfs;
 
@@ -63,10 +68,17 @@ public class BzdzkActivity extends SherlockFragmentActivity {
 
 	private SlidingMenu menu;
 	private boolean isNew = true;
+	private boolean isShowGraphic;
+	private boolean isCanMark;
+	private boolean isExit;
 
 	private String mark_url;
 	private TreeBean mark_tree;
 	private View view;
+
+	private String yhid;
+	private String name;
+
 	private final static String URL = "http://192.168.1.101:6080/arcgis/rest/services/PGIS/bzdzk/MapServer";
 	// private final static String URL =
 	// "http://192.168.1.101:6080/arcgis/rest/services/PGIS/XZQH/MapServer";
@@ -83,6 +95,11 @@ public class BzdzkActivity extends SherlockFragmentActivity {
 		super.onCreate(savedInstanceState);
 		requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
 		setContentView(R.layout.main);
+		
+		Intent intent = getIntent();
+		yhid = intent.getStringExtra("yhid");
+		name = intent.getStringExtra("name");
+		name = null;
 		findAndSetListener();
 		dLayer = new ArcGISDynamicMapServiceLayer(URL);
 		mMapView.addLayer(dLayer);
@@ -100,11 +117,9 @@ public class BzdzkActivity extends SherlockFragmentActivity {
 		menu.setBehindScrollScale(0);
 		menu.attachToActivity(this, SlidingMenu.SLIDING_WINDOW);
 		menu.setMenu(R.layout.menu_frame);
-		
 
 		TreeHelper.getInstance(this, true, null).initTree(URLHelper.ZRQ);
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-		setSupportProgress(Window.PROGRESS_END);
 
 	}
 
@@ -120,10 +135,11 @@ public class BzdzkActivity extends SherlockFragmentActivity {
 	}
 
 	public void updateLayer(String layer, TreeBean tree, View view) {
-	
-		menu.toggle();
-	
+
+		showGraphicOnMap(tree);
+
 		boolean canMark = true;
+		menu.toggle();
 		mark_tree = tree;
 		this.view = view;
 		if ("xq".equals(layer)) {
@@ -138,78 +154,76 @@ public class BzdzkActivity extends SherlockFragmentActivity {
 			mark_url = "/11";
 		} else {
 			canMark = false;
-			// un_mark_bt.setVisibility(View.GONE);
 			mark_tree = null;
 			this.view = null;
 		}
 		if (canMark) {
-			un_mark_bt.setVisibility(View.VISIBLE);
+			mark_bt.setVisibility(View.VISIBLE);
 			if (tree.getMark()) {
 				showUnMark();
 			} else {
 				showMark();
 			}
-	
-			// un_mark_bt.setVisibility(View.VISIBLE);
-			// if (mark_tree.getMark()) {
-			// un_mark_bt.setVisibility(View.VISIBLE);
-			// un_mark_bt.setTag(mark_tree);
-			// }
 		} else {
-			un_mark_bt.setVisibility(View.GONE);
+			mark_bt.setVisibility(View.GONE);
 		}
 	}
 
-	class DialogClickListener implements DialogInterface.OnClickListener {
-		private TreeBean tree;
-		private int flag;
-		private int[] uids;
-		private float x, y;
+	class AsyncShowGraphicTask extends AsyncTask<String, Void, String> {
 
-		public DialogClickListener(TreeBean tree, int flag) {
-			this.tree = tree;
-			this.flag = flag;
-		}
-
-		public DialogClickListener(TreeBean tree, int flag, int[] uids, float x, float y) {
-			this.tree = tree;
-			this.flag = flag;
-			this.uids = uids;
-			this.x = x;
-			this.y = y;
-		}
-
-		public void onClick(DialogInterface dialog, int which) {
-			switch (flag) {
-			case UN_MARK:
-				new AsyncUnMarkTask(tree).execute(URLHelper.BASE + "qxbz" + "?zhid=" + tree.getId());
-				break;
-			case MARK:
-				int targetId = uids[0];
-				Graphic gr = mGraphicsLayer.getGraphic(targetId);
-				Map<String, Object> m = gr.getAttributes();
-				Point pt = mMapView.toMapPoint(x, y);
-				new AsyncMarkTask(tree,gr).execute(URLHelper.BASE + "bz", m.get("OBJECTID") + "", pt.getX() + "," + pt.getY());
-				break;
-			}
-		}
-	}
-
-	class ButtonClickListener implements View.OnClickListener {
-	
 		@Override
-		public void onClick(View v) {
-			switch (((Integer) v.getTag())) {
-			case UN_MARK:
-				if (mark_tree != null) {
-					alert(mark_tree, UN_MARK, R.string.confirm_un_mark);
+		protected void onPreExecute() {
+			super.onPreExecute();
+			showProgressBar(true);
+			isShowGraphic = true;
+		}
+
+		@Override
+		protected String doInBackground(String... params) {
+
+			String OBJECTID = URLHelper.queryStringForGet(params[0]).split(",")[0];
+			try {
+				Query q = new Query();
+				q.setReturnGeometry(true);
+				q.setOutFields(new String[] { "OBJECTID" });
+				q.setWhere("OBJECTID=" + OBJECTID);
+				q.setInSpatialReference(mMapView.getSpatialReference());
+				String query_url = URL + BzdzkActivity.this.mark_url;
+				q.setSpatialRelationship(SpatialRelationship.INTERSECTS);
+				QueryTask queryTask = new QueryTask(query_url);
+				GraphicsLayer graphicsLayer = getGraphicLayer();
+				FeatureSet fs = queryTask.execute(q);
+				if (fs != null && graphicsLayer.isInitialized() && graphicsLayer.isVisible()) {
+					Graphic[] grs = fs.getGraphics();
+					if (grs.length > 0) {
+						SimpleFillSymbol symbol = new SimpleFillSymbol(Color.RED);
+						graphicsLayer.setRenderer(new SimpleRenderer(symbol));
+						graphicsLayer.removeAll();
+						if (isShowGraphic) {
+							graphicsLayer.addGraphics(grs);
+							isShowGraphic = false;
+						}
+					}
 				}
-				break;
-			case MARK:
-				mMapView.setOnTouchListener(touchListener);
-				break;
+				return "success";
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+
+			return null;
+		}
+
+		@Override
+		protected void onPostExecute(String result) {
+			super.onPostExecute(result);
+			if (!"success".equals(result)) {
+				new AlertDialog.Builder(BzdzkActivity.this).setTitle(R.string.title).setMessage(R.string.show_graphic_fasle).setPositiveButton(R.string.know, null).create().show();
+			}
+			if (!isShowGraphic) {
+				showProgressBar(false);
 			}
 		}
+
 	}
 
 	class AsyncUnMarkTask extends AsyncTask<String, Void, String> {
@@ -223,7 +237,6 @@ public class BzdzkActivity extends SherlockFragmentActivity {
 		@Override
 		protected void onPreExecute() {
 			super.onPreExecute();
-
 			progress = new ProgressDialog(BzdzkActivity.this);
 			progress.setCancelable(false);
 			progress.setCanceledOnTouchOutside(false);
@@ -246,6 +259,7 @@ public class BzdzkActivity extends SherlockFragmentActivity {
 					iv.setImageBitmap(null);
 					tree.setMark(false);
 					showMark();
+					removeGraphic();
 				}
 				new AlertDialog.Builder(BzdzkActivity.this).setTitle(R.string.title).setMessage(R.string.un_mark_success).setPositiveButton(R.string.know, null).create().show();
 			} else {
@@ -288,10 +302,10 @@ public class BzdzkActivity extends SherlockFragmentActivity {
 			String SUCCESS = null;
 			if (mark_tree != null) {
 
-				String json = URLHelper.queryStringForGet(URLHelper.BASE + "getMapconfig?zhid=" + mark_tree.getId());
+				String json = URLHelper.queryStringForGet(URLHelper.BASE + "getMapconfig?zhid=" + mark_tree.getId()+"&yhid="+yhid);
 				String tcmc = JSONHelper.getTcmcFromJson(json);
 
-				String mark_url = params[0] + "?zhid=" + mark_tree.getId() + "&tcid=" + params[1] + "&tcmc=" + tcmc + "&zxPoint=" + params[1];
+				String mark_url = params[0] + "?zhid=" + mark_tree.getId() + "&tcid=" + params[1] + "&tcmc=" + tcmc + "&zxPoint=" + params[1]+"&yhid="+yhid;
 
 				SUCCESS = URLHelper.queryStringForGet(mark_url);
 				if ("success".equals(SUCCESS)) {
@@ -299,26 +313,29 @@ public class BzdzkActivity extends SherlockFragmentActivity {
 						GraphicsLayer graphicsLayer = getGraphicLayer();
 						graphicsLayer.removeAll();
 						graphicsLayer.addGraphic(gr);
-						
-//						Query q = new Query();
-//						q.setReturnGeometry(true);
-//						q.setOutFields(new String[] { "OBJECTID" });
-//						q.setWhere("OBJECTID=" + params[1]);
-//						q.setInSpatialReference(mMapView.getSpatialReference());
-//						String query_url = URL + BzdzkActivity.this.mark_url;
-//						q.setSpatialRelationship(SpatialRelationship.INTERSECTS);
-//						QueryTask queryTask = new QueryTask(query_url);
-//						GraphicsLayer graphicsLayer = getGraphicLayer();
-//						FeatureSet fs = queryTask.execute(q);
-//						if (fs != null && graphicsLayer.isInitialized() && graphicsLayer.isVisible()) {
-//							Graphic[] grs = fs.getGraphics();
-//							if (grs.length > 0) {
-//								SimpleFillSymbol symbol = new SimpleFillSymbol(Color.RED);
-//								graphicsLayer.setRenderer(new SimpleRenderer(symbol));
-//								graphicsLayer.removeAll();
-//								graphicsLayer.addGraphics(grs);
-//							}
-//						}
+
+						// Query q = new Query();
+						// q.setReturnGeometry(true);
+						// q.setOutFields(new String[] { "OBJECTID" });
+						// q.setWhere("OBJECTID=" + params[1]);
+						// q.setInSpatialReference(mMapView.getSpatialReference());
+						// String query_url = URL + BzdzkActivity.this.mark_url;
+						// q.setSpatialRelationship(SpatialRelationship.INTERSECTS);
+						// QueryTask queryTask = new QueryTask(query_url);
+						// GraphicsLayer graphicsLayer = getGraphicLayer();
+						// FeatureSet fs = queryTask.execute(q);
+						// if (fs != null && graphicsLayer.isInitialized() &&
+						// graphicsLayer.isVisible()) {
+						// Graphic[] grs = fs.getGraphics();
+						// if (grs.length > 0) {
+						// SimpleFillSymbol symbol = new
+						// SimpleFillSymbol(Color.RED);
+						// graphicsLayer.setRenderer(new
+						// SimpleRenderer(symbol));
+						// graphicsLayer.removeAll();
+						// graphicsLayer.addGraphics(grs);
+						// }
+						// }
 					} catch (Exception e) {
 						e.printStackTrace();
 					}
@@ -349,6 +366,110 @@ public class BzdzkActivity extends SherlockFragmentActivity {
 
 		}
 
+	}
+
+	private class AsyncQueryTask extends AsyncTask<Object, Void, FeatureSet> {
+
+		private ProgressDialog progress;
+
+		protected void onPreExecute() {
+			progress = ProgressDialog.show(BzdzkActivity.this, "", "Please wait....query task is executing");
+
+		}
+
+		@Override
+		protected FeatureSet doInBackground(Object... queryParams) {
+			// if (queryParams == null || queryParams.length <= 1)
+			// return null;
+			Query query = (Query) queryParams[0];
+			String queryUrl = (String) queryParams[1];
+			QueryTask queryTask = new QueryTask(queryUrl);
+
+			FeatureSet fs = null;
+			try {
+				fs = queryTask.execute(query);
+			} catch (Exception e) {
+				e.printStackTrace();
+				Log.e(TAG, e.getMessage());
+			}
+			return fs;
+
+		}
+
+		protected void onPostExecute(FeatureSet fs) {
+			GraphicsLayer graphicsLayer = getGraphicLayer();
+			String message = "No result comes back";
+			if (fs != null && graphicsLayer.isInitialized() && graphicsLayer.isVisible()) {
+				Graphic[] grs = fs.getGraphics();
+				if (grs.length > 0) {
+					SimpleFillSymbol symbol = new SimpleFillSymbol(Color.RED);
+					graphicsLayer.setRenderer(new SimpleRenderer(symbol));
+					graphicsLayer.removeAll();
+					graphicsLayer.addGraphics(grs);
+
+					message = (grs.length == 1 ? "1 result has " : Integer.toString(grs.length) + " results have ") + "come back";
+				}
+
+			}
+			Toast toast = Toast.makeText(BzdzkActivity.this, message, Toast.LENGTH_LONG);
+			toast.show();
+
+			progress.dismiss();
+
+		}
+
+	}
+
+	class ButtonClickListener implements View.OnClickListener {
+
+		@Override
+		public void onClick(View v) {
+			switch (((Integer) v.getTag())) {
+			case UN_MARK:
+				if (mark_tree != null) {
+					alert(mark_tree, UN_MARK, R.string.confirm_un_mark);
+				}
+				break;
+			case MARK:
+				mMapView.setOnTouchListener(touchListener);
+				break;
+			}
+		}
+	}
+
+	class DialogClickListener implements DialogInterface.OnClickListener {
+		private TreeBean tree;
+		private int flag;
+		private int[] uids;
+		private float x, y;
+
+		public DialogClickListener(TreeBean tree, int flag) {
+			this.tree = tree;
+			this.flag = flag;
+		}
+
+		public DialogClickListener(TreeBean tree, int flag, int[] uids, float x, float y) {
+			this.tree = tree;
+			this.flag = flag;
+			this.uids = uids;
+			this.x = x;
+			this.y = y;
+		}
+
+		public void onClick(DialogInterface dialog, int which) {
+			switch (flag) {
+			case UN_MARK:
+				new AsyncUnMarkTask(tree).execute(URLHelper.BASE + "qxbz" + "?zhid=" + tree.getId()+"&yhid="+yhid);
+				break;
+			case MARK:
+				int targetId = uids[0];
+				Graphic gr = mGraphicsLayer.getGraphic(targetId);
+				Map<String, Object> m = gr.getAttributes();
+				Point pt = mMapView.toMapPoint(x, y);
+				new AsyncMarkTask(tree, gr).execute(URLHelper.BASE + "bz", m.get("OBJECTID") + "", pt.getX() + "," + pt.getY());
+				break;
+			}
+		}
 	}
 
 	class MyTouchListener extends MapOnTouchListener {
@@ -415,58 +536,6 @@ public class BzdzkActivity extends SherlockFragmentActivity {
 
 	}
 
-	private class AsyncQueryTask extends AsyncTask<Object, Void, FeatureSet> {
-
-		private ProgressDialog progress;
-
-		protected void onPreExecute() {
-			progress = ProgressDialog.show(BzdzkActivity.this, "", "Please wait....query task is executing");
-
-		}
-
-		@Override
-		protected FeatureSet doInBackground(Object... queryParams) {
-			// if (queryParams == null || queryParams.length <= 1)
-			// return null;
-			Query query = (Query) queryParams[0];
-			String queryUrl = (String) queryParams[1];
-			QueryTask queryTask = new QueryTask(queryUrl);
-
-			FeatureSet fs = null;
-			try {
-				fs = queryTask.execute(query);
-			} catch (Exception e) {
-				e.printStackTrace();
-				Log.e(TAG, e.getMessage());
-			}
-			return fs;
-
-		}
-
-		protected void onPostExecute(FeatureSet fs) {
-			GraphicsLayer graphicsLayer = getGraphicLayer();
-			String message = "No result comes back";
-			if (fs != null && graphicsLayer.isInitialized() && graphicsLayer.isVisible()) {
-				Graphic[] grs = fs.getGraphics();
-				if (grs.length > 0) {
-					SimpleFillSymbol symbol = new SimpleFillSymbol(Color.RED);
-					graphicsLayer.setRenderer(new SimpleRenderer(symbol));
-					graphicsLayer.removeAll();
-					graphicsLayer.addGraphics(grs);
-
-					message = (grs.length == 1 ? "1 result has " : Integer.toString(grs.length) + " results have ") + "come back";
-				}
-
-			}
-			Toast toast = Toast.makeText(BzdzkActivity.this, message, Toast.LENGTH_LONG);
-			toast.show();
-
-			progress.dismiss();
-
-		}
-
-	}
-
 	protected void statusChange(Object source, STATUS status) {
 
 		if (source == mMapView && status == STATUS.INITIALIZED) {
@@ -523,41 +592,54 @@ public class BzdzkActivity extends SherlockFragmentActivity {
 
 	}
 
-	private void findAndSetListener() {
-			mMapView = (MapView) findViewById(R.id.map);
-			// condition = (EditText) findViewById(R.id.condition);
-			// extent_bt = (Button) findViewById(R.id.extent);
-			un_mark_bt = (Button) findViewById(R.id.un_mark);
-	
-			mMapView.setOnStatusChangedListener(new OnStatusChangedListener() {
-				public void onStatusChanged(Object source, STATUS status) {
-					statusChange(source, status);
-				}
-			});
-	
-			ButtonClickListener bc = new ButtonClickListener();
-			// extent_bt.setOnClickListener(bc);
-			un_mark_bt.setOnClickListener(bc);
-			touchListener = new MyTouchListener(this, mMapView);
-			defaulttouchListener = new MapOnTouchListener(this, mMapView);
-	
-			mMapView.setOnSingleTapListener(new OnSingleTapListener() {
-	
-				private static final long serialVersionUID = 1L;
-	
-				public void onSingleTap(float x, float y) {
-					if (!mMapView.isLoaded())
-						return;
-					mGraphicsLayer = getGraphicLayer();
-					int[] uids = mGraphicsLayer.getGraphicIDs(x, y, 2);
-					if (uids != null && uids.length > 0) {
-						alert(mark_tree, MARK, R.string.confirm_mark, uids, x, y);
-					} else {
-	//					Toast.makeText(BzdzkActivity.this, "22222222", 0).show();
-					}
-				}
-			});
+	public void removeGraphic() {
+		isShowGraphic = false;
+		getGraphicLayer().removeAll();
+	}
+
+	private void showGraphicOnMap(TreeBean tree) {
+		removeGraphic();
+		if (tree.getMark() && canMark(tree.getId().split(",")[0])) {
+			String url = URLHelper.BASE + "getTcxx?zhid=" + tree.getId()+"&yhid="+yhid;
+			new AsyncShowGraphicTask().execute(url);
 		}
+	
+	}
+
+	private void findAndSetListener() {
+		mMapView = (MapView) findViewById(R.id.map);
+		mark_bt = (Button) findViewById(R.id.mark);
+		progressBar = (ProgressBar) findViewById(R.id.progressBar);
+
+		mMapView.setOnStatusChangedListener(new OnStatusChangedListener() {
+			public void onStatusChanged(Object source, STATUS status) {
+				statusChange(source, status);
+			}
+		});
+
+		ButtonClickListener bc = new ButtonClickListener();
+		// extent_bt.setOnClickListener(bc);
+		mark_bt.setOnClickListener(bc);
+		touchListener = new MyTouchListener(this, mMapView);
+		defaulttouchListener = new MapOnTouchListener(this, mMapView);
+
+		mMapView.setOnSingleTapListener(new OnSingleTapListener() {
+
+			private static final long serialVersionUID = 1L;
+
+			public void onSingleTap(float x, float y) {
+				if (!mMapView.isLoaded())
+					return;
+				mGraphicsLayer = getGraphicLayer();
+				int[] uids = mGraphicsLayer.getGraphicIDs(x, y, 2);
+				if (uids != null && uids.length > 0 && isCanMark) {
+					alert(mark_tree, MARK, R.string.confirm_mark, uids, x, y);
+				} else {
+					// Toast.makeText(BzdzkActivity.this, "22222222", 0).show();
+				}
+			}
+		});
+	}
 
 	private void alert(TreeBean tree, int flag, int message, int[] uids, float x, float y) {
 		new AlertDialog.Builder(BzdzkActivity.this).setTitle(R.string.title).setNegativeButton(R.string.negative, null).setNegativeButton(R.string.negative, null).setMessage(message)
@@ -576,14 +658,24 @@ public class BzdzkActivity extends SherlockFragmentActivity {
 				.setPositiveButton(R.string.positive, new DialogClickListener(tree, flag)).create().show();
 	}
 
+	private void showProgressBar(boolean show) {
+		if (show) {
+			progressBar.setVisibility(View.VISIBLE);
+		} else {
+			progressBar.setVisibility(View.GONE);
+		}
+	}
+
 	private void showMark() {
-		un_mark_bt.setText(R.string.extent);
-		un_mark_bt.setTag(MARK);
+		mark_bt.setText(R.string.extent);
+		mark_bt.setTag(MARK);
+		isCanMark = true;
 	}
 
 	private void showUnMark() {
-		un_mark_bt.setText(R.string.un_mark);
-		un_mark_bt.setTag(UN_MARK);
+		mark_bt.setText(R.string.un_mark);
+		mark_bt.setTag(UN_MARK);
+		isCanMark = false;
 	}
 
 	private GraphicsLayer getGraphicLayer() {
@@ -598,6 +690,8 @@ public class BzdzkActivity extends SherlockFragmentActivity {
 	protected void onDestroy() {
 		super.onDestroy();
 		TreeHelper.release();
+		yhid = null;
+		name = null;
 	}
 
 	@Override
@@ -613,7 +707,7 @@ public class BzdzkActivity extends SherlockFragmentActivity {
 	}
 
 	public void hiddenButton() {
-		un_mark_bt.setVisibility(View.GONE);
+		mark_bt.setVisibility(View.GONE);
 	}
 
 	public void back(View view) {
@@ -628,14 +722,15 @@ public class BzdzkActivity extends SherlockFragmentActivity {
 			if (mark_tree != null) {
 				String type = mark_tree.getId().split(",")[0];
 				if (canMark(type)) {
-					un_mark_bt.setVisibility(View.VISIBLE);
+					mark_bt.setVisibility(View.VISIBLE);
 					if (mark_tree.getMark()) {
 						showUnMark();
 					} else {
 						showMark();
 					}
 				} else {
-					un_mark_bt.setVisibility(View.GONE);
+					isCanMark = false;
+					mark_bt.setVisibility(View.GONE);
 				}
 			}
 		}
@@ -651,10 +746,28 @@ public class BzdzkActivity extends SherlockFragmentActivity {
 		if (menu.isMenuShowing()) {
 			menu.toggle();
 		} else {
+			exitBy2Click();
+		}
+
+	}
+
+	private void exitBy2Click() {
+		Timer tExit = null;
+		if (isExit == false) {
+			isExit = true; // 准备退出
+			Toast.makeText(this, "再按一次退出程序", Toast.LENGTH_SHORT).show();
+			tExit = new Timer();
+			tExit.schedule(new TimerTask() {
+				@Override
+				public void run() {
+					isExit = false; // 取消退出
+				}
+			}, 2000); // 如果2秒钟内没有按下返回键，则启动定时器取消掉刚才执行的任务
+
+		} else {
 			finish();
 			super.onBackPressed();
 		}
-
 	}
 
 }

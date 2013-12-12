@@ -7,21 +7,15 @@ public class TreeBean {
 	}
 
 	private String id;
-//	private int jdid;
-//	private long zrqid;
+	// private int jdid;
+	// private long zrqid;
 	private String sjid;
-//	private Type type;
-//	private Type sjtype;
+	// private Type type;
+	// private Type sjtype;
 	private String name;
-	
+
 	private boolean mark;
 	private String isParent;
-
-	
-
-	
-	
-
 
 	public boolean getMark() {
 		return mark;
@@ -54,8 +48,6 @@ public class TreeBean {
 	public void setSjid(String sjid) {
 		this.sjid = sjid;
 	}
-
-	
 
 	public String getName() {
 		return name;

@@ -21,7 +21,6 @@ public class TreeAdapter extends BaseAdapter {
 
 	public static final int GRIDLAYOUT_CHILDVIEW_COUNT = 9;
 
-
 	private List<TreeBean> treeList;
 	private LayoutInflater mInflater;
 	private Context context;
@@ -30,7 +29,7 @@ public class TreeAdapter extends BaseAdapter {
 		mInflater = LayoutInflater.from(context);
 		treeList = new ArrayList<TreeBean>();
 		this.context = context;
-		
+
 	}
 
 	public void setItemList(List<TreeBean> msgList) {
@@ -70,29 +69,22 @@ public class TreeAdapter extends BaseAdapter {
 		} else {
 			holder = (ViewHolder) convertView.getTag();
 		}
-		
+
 		TreeBean tree = treeList.get(position);
-		if(tree.getMark()){
+		if (tree.getMark()) {
 			holder.flag.setImageResource(R.drawable.ic_launcher);
-		}else{
+		} else {
 			holder.flag.setImageBitmap(null);
 		}
 		holder.name.setText(tree.getName());
-		
-		
-	
-		
-		
-		
-		
-		
+
 		return convertView;
 	}
+
 	private class ViewHolder {
 
 		private ImageView flag;
 		private TextView name;
-	
 
 	}
 }

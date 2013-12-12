@@ -287,11 +287,11 @@ public final class R {
 		public static final int abs__textfield_searchview_right_holo_dark = 0x7f02006d;
 		public static final int abs__textfield_searchview_right_holo_light = 0x7f02006e;
 		public static final int abs__toast_frame = 0x7f02006f;
-		public static final int default_ptr_flip = 0x7f020070;
-		public static final int default_ptr_rotate = 0x7f020071;
-		public static final int indicator_arrow = 0x7f020073;
-		public static final int indicator_bg_bottom = 0x7f020074;
-		public static final int indicator_bg_top = 0x7f020075;
+		public static final int default_ptr_flip = 0x7f020071;
+		public static final int default_ptr_rotate = 0x7f020072;
+		public static final int indicator_arrow = 0x7f020074;
+		public static final int indicator_bg_bottom = 0x7f020075;
+		public static final int indicator_bg_top = 0x7f020076;
 	}
 	public static final class id {
 		public static final int abs__action_bar = 0x7f05002c;
@@ -337,7 +337,7 @@ public final class R {
 		public static final int disableHome = 0x7f050009;
 		public static final int disabled = 0x7f050010;
 		public static final int edit_query = 0x7f050032;
-		public static final int fl_inner = 0x7f050041;
+		public static final int fl_inner = 0x7f050048;
 		public static final int flip = 0x7f050018;
 		public static final int gridview = 0x7f050019;
 		public static final int homeAsUp = 0x7f050006;
@@ -348,10 +348,10 @@ public final class R {
 		public static final int pullFromEnd = 0x7f050012;
 		public static final int pullFromStart = 0x7f050011;
 		public static final int pullUpFromBottom = 0x7f050016;
-		public static final int pull_to_refresh_image = 0x7f050042;
-		public static final int pull_to_refresh_progress = 0x7f050043;
-		public static final int pull_to_refresh_sub_text = 0x7f050045;
-		public static final int pull_to_refresh_text = 0x7f050044;
+		public static final int pull_to_refresh_image = 0x7f050049;
+		public static final int pull_to_refresh_progress = 0x7f05004a;
+		public static final int pull_to_refresh_sub_text = 0x7f05004c;
+		public static final int pull_to_refresh_text = 0x7f05004b;
 		public static final int rotate = 0x7f050017;
 		public static final int scrollview = 0x7f05001b;
 		public static final int showCustom = 0x7f050008;
@@ -387,10 +387,10 @@ public final class R {
 		public static final int abs__search_dropdown_item_icons_2line = 0x7f030012;
 		public static final int abs__search_view = 0x7f030013;
 		public static final int abs__simple_dropdown_hint = 0x7f030014;
-		public static final int pull_to_refresh_header_horizontal = 0x7f030017;
-		public static final int pull_to_refresh_header_vertical = 0x7f030018;
-		public static final int sherlock_spinner_dropdown_item = 0x7f030019;
-		public static final int sherlock_spinner_item = 0x7f03001a;
+		public static final int pull_to_refresh_header_horizontal = 0x7f030018;
+		public static final int pull_to_refresh_header_vertical = 0x7f030019;
+		public static final int sherlock_spinner_dropdown_item = 0x7f03001a;
+		public static final int sherlock_spinner_item = 0x7f03001b;
 	}
 	public static final class string {
 		public static final int abs__action_bar_home_description = 0x7f0a0000;
