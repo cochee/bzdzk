@@ -24,8 +24,9 @@ public class TreeHelper {
 	private static Handler handler;
 	private static ProgressDialog progress;
 
-	private static Activity _activity;
+	private static SherlockFragmentActivity _activity;
 	private static boolean _isFirst;
+	private static TreeBean _parent;
 	private static TreeHelper tree;
 
 	private TreeHelper() {
@@ -55,9 +56,10 @@ public class TreeHelper {
 		}.start();
 	}
 
-	public static TreeHelper getInstance(final SherlockFragmentActivity activity, final boolean isFirst) {
+	public static TreeHelper getInstance(SherlockFragmentActivity activity, boolean isFirst, TreeBean parent) {
 		_activity = activity;
 		_isFirst = isFirst;
+		_parent = parent;
 		if (tree == null) {
 			tree = new TreeHelper();
 			handler = new Handler() {
@@ -65,21 +67,19 @@ public class TreeHelper {
 				public void handleMessage(Message msg) {
 					switch (msg.what) {
 					case IS_ONLINE_TRUE:
-						FragmentTransaction ft = activity.getSupportFragmentManager().beginTransaction();
-
-						// TreeFragment fragment= new
-						// TreeFragment((ArrayList<TreeBean>) msg.obj);
-
-						ft.replace(R.id.menu_frame, new TreeFragment((ArrayList<TreeBean>) msg.obj));
+						FragmentTransaction ft = _activity.getSupportFragmentManager().beginTransaction();
+						TreeFragment fragment = new TreeFragment((ArrayList<TreeBean>) msg.obj);
+						fragment.setParent_tree(_parent);
+						ft.replace(R.id.menu_frame,fragment, _parent==null?"":_parent.getId());
 						if (!_isFirst)
 							ft.addToBackStack(null);
 						ft.commit();
 						break;
 					case IS_ONLINE_FALSE:
-						new AlertDialog.Builder(activity).setTitle(R.string.title).setMessage(R.string.online_error).setPositiveButton(R.string.know, null).create().show();
+						new AlertDialog.Builder(_activity).setTitle(R.string.title).setMessage(R.string.online_error).setPositiveButton(R.string.know, null).create().show();
 						break;
 					case IS_NO_CHILD:
-						new AlertDialog.Builder(activity).setTitle(R.string.title).setMessage(R.string.no_child).setPositiveButton(R.string.know, null).create().show();
+						new AlertDialog.Builder(_activity).setTitle(R.string.title).setMessage(R.string.no_child).setPositiveButton(R.string.know, null).create().show();
 						break;
 					}
 					if (progress != null && progress.isShowing()) {

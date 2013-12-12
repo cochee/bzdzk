@@ -14,6 +14,7 @@ import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.handmark.pulltorefresh.library.PullToRefreshBase;
 import com.handmark.pulltorefresh.library.PullToRefreshListView;
 import com.handmark.pulltorefresh.library.PullToRefreshBase.OnRefreshListener2;
+import com.vallny.bzdzk.adapter.TreeAdapter;
 import com.vallny.bzdzk.bean.TreeBean;
 import com.vallny.bzdzk.util.TreeHelper;
 import com.vallny.bzdzk.util.JSONHelper;
@@ -61,6 +62,9 @@ public class TreeFragment extends SherlockFragment implements OnRefreshListener2
 	private Boolean isOnline;
 
 	private String url;
+	
+	private TreeBean parent_tree;
+	private TreeBean curent_tree;
 
 	public TreeFragment() {
 	}
@@ -160,13 +164,14 @@ public class TreeFragment extends SherlockFragment implements OnRefreshListener2
 		mPullRefreshListView.getRefreshableView().setItemChecked(position, true);
 
 		TreeBean tree = (TreeBean) parent.getAdapter().getItem(position);
+		setCurent_tree(tree);
 		if (canMark(tree)) {
 			activity.setSupportProgress(Window.PROGRESS_END);
 			activity.setSupportProgressBarIndeterminateVisibility(true);
 
 			String layer = tree.getId().split(",")[0];
 			activity.updateLayer(layer,tree,view);
-			Toast.makeText(activity, ((TextView)view.findViewById(R.id.name)).getText().toString(), 0).show();
+//			Toast.makeText(activity, ((TextView)view.findViewById(R.id.name)).getText().toString(), 0).show();
 
 		}
 
@@ -203,16 +208,30 @@ public class TreeFragment extends SherlockFragment implements OnRefreshListener2
 	public boolean onItemLongClick(AdapterView<?> arg0, View arg1, int position, long id) {
 
 		Log.e(TAG, position + "****" + id + "LongClick");
-
+		activity.hiddenButton();
 		TreeBean tree = (TreeBean) arg0.getAdapter().getItem(position);
-		FragmentTransaction ft = getFragmentManager().beginTransaction();
 		String url = URLHelper.ZRQ + "?sjid=" + tree.getId();
-		TreeHelper.getInstance(activity, false).initTree(url);
+		TreeHelper.getInstance(activity, false,tree).initTree(url);
 
 		return true;
 	}
 
-	
+	public TreeBean getParent_tree() {
+		return parent_tree;
+	}
+
+	public void setParent_tree(TreeBean parent_tree) {
+		this.parent_tree = parent_tree;
+	}
+
+	public TreeBean getCurent_tree() {
+		return curent_tree;
+	}
+
+	public void setCurent_tree(TreeBean curent_tree) {
+		this.curent_tree = curent_tree;
+	}
+
 
 
 }
