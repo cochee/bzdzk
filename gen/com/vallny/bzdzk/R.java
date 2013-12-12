@@ -1227,6 +1227,8 @@ containing a value of this type.
         public static final int know=0x7f0a0022;
         public static final int loading=0x7f0a0018;
         public static final int login=0x7f0a002d;
+        public static final int logining=0x7f0a0030;
+        public static final int logout=0x7f0a0031;
         public static final int marking=0x7f0a0019;
         public static final int negative=0x7f0a001e;
         public static final int no_child=0x7f0a0020;

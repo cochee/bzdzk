@@ -413,6 +413,8 @@ int string is_empty 0x7f0a002e
 int string know 0x7f0a0022
 int string loading 0x7f0a0018
 int string login 0x7f0a002d
+int string logining 0x7f0a0030
+int string logout 0x7f0a0031
 int string marking 0x7f0a0019
 int string negative 0x7f0a001e
 int string no_child 0x7f0a0020

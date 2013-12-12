@@ -9,6 +9,7 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences.Editor;
 import android.graphics.Color;
 import android.location.Location;
 import android.location.LocationListener;
@@ -25,6 +26,7 @@ import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.actionbarsherlock.app.SherlockFragmentActivity;
+import com.actionbarsherlock.view.Menu;
 import com.actionbarsherlock.view.MenuItem;
 import com.esri.android.map.GraphicsLayer;
 import com.esri.android.map.LocationService;
@@ -49,11 +51,13 @@ import com.esri.core.tasks.ags.query.Query;
 import com.esri.core.tasks.ags.query.QueryTask;
 import com.jeremyfeinstein.slidingmenu.lib.SlidingMenu;
 import com.vallny.bzdzk.bean.TreeBean;
+import com.vallny.bzdzk.global.BaseActivity;
+import com.vallny.bzdzk.global.BaseApplication;
 import com.vallny.bzdzk.util.JSONHelper;
 import com.vallny.bzdzk.util.TreeHelper;
 import com.vallny.bzdzk.util.URLHelper;
 
-public class BzdzkActivity extends SherlockFragmentActivity {
+public class BzdzkActivity extends BaseActivity {
 
 	private MapView mMapView;
 	private ArcGISDynamicMapServiceLayer dLayer;
@@ -89,17 +93,19 @@ public class BzdzkActivity extends SherlockFragmentActivity {
 	public final static int MARK = 0;
 	public final static int UN_MARK = 1;
 
+	public final static int LOGOUT = 2;
+
 	/** Called when the activity is first created. */
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
 		setContentView(R.layout.main);
-		
+
 		Intent intent = getIntent();
 		yhid = intent.getStringExtra("yhid");
 		name = intent.getStringExtra("name");
-		name = null;
+
 		findAndSetListener();
 		dLayer = new ArcGISDynamicMapServiceLayer(URL);
 		mMapView.addLayer(dLayer);
@@ -118,9 +124,14 @@ public class BzdzkActivity extends SherlockFragmentActivity {
 		menu.attachToActivity(this, SlidingMenu.SLIDING_WINDOW);
 		menu.setMenu(R.layout.menu_frame);
 
-		TreeHelper.getInstance(this, true, null).initTree(URLHelper.ZRQ);
+		TreeHelper.getInstance(this, true, null).initTree(URLHelper.ZRQ + "?yhid=" + yhid);
 		getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
+	}
+
+	public boolean onCreateOptionsMenu(Menu menu) {
+		menu.add(Menu.NONE,LOGOUT,Menu.NONE,R.string.logout).setIcon(R.drawable.ic_launcher).setShowAsAction(MenuItem.SHOW_AS_ACTION_NEVER);
+		return true;
 	}
 
 	@Override
@@ -129,9 +140,23 @@ public class BzdzkActivity extends SherlockFragmentActivity {
 		switch (item.getItemId()) {
 		case android.R.id.home:
 			menu.toggle();
-			return true;
+			break;
+		case LOGOUT:
+			logout();
+			Intent intent = new Intent(BzdzkActivity.this,LoginActivity.class);
+			startActivity(intent);
+			finish();
+			break;
 		}
 		return super.onOptionsItemSelected(item);
+	}
+
+	private void logout() {
+		Editor editor = getSharedPreferences(LoginActivity.PREFS_NAME, Context.MODE_PRIVATE).edit();
+		editor.remove("loginname");
+		editor.remove("loginpwd");
+		editor.commit();
+		
 	}
 
 	public void updateLayer(String layer, TreeBean tree, View view) {
@@ -302,10 +327,10 @@ public class BzdzkActivity extends SherlockFragmentActivity {
 			String SUCCESS = null;
 			if (mark_tree != null) {
 
-				String json = URLHelper.queryStringForGet(URLHelper.BASE + "getMapconfig?zhid=" + mark_tree.getId()+"&yhid="+yhid);
+				String json = URLHelper.queryStringForGet(URLHelper.BASE + "getMapconfig?zhid=" + mark_tree.getId() + "&yhid=" + yhid);
 				String tcmc = JSONHelper.getTcmcFromJson(json);
 
-				String mark_url = params[0] + "?zhid=" + mark_tree.getId() + "&tcid=" + params[1] + "&tcmc=" + tcmc + "&zxPoint=" + params[1]+"&yhid="+yhid;
+				String mark_url = params[0] + "?zhid=" + mark_tree.getId() + "&tcid=" + params[1] + "&tcmc=" + tcmc + "&zxPoint=" + params[2] + "&yhid=" + yhid;
 
 				SUCCESS = URLHelper.queryStringForGet(mark_url);
 				if ("success".equals(SUCCESS)) {
@@ -459,7 +484,7 @@ public class BzdzkActivity extends SherlockFragmentActivity {
 		public void onClick(DialogInterface dialog, int which) {
 			switch (flag) {
 			case UN_MARK:
-				new AsyncUnMarkTask(tree).execute(URLHelper.BASE + "qxbz" + "?zhid=" + tree.getId()+"&yhid="+yhid);
+				new AsyncUnMarkTask(tree).execute(URLHelper.BASE + "qxbz" + "?zhid=" + tree.getId() + "&yhid=" + yhid);
 				break;
 			case MARK:
 				int targetId = uids[0];
@@ -600,10 +625,10 @@ public class BzdzkActivity extends SherlockFragmentActivity {
 	private void showGraphicOnMap(TreeBean tree) {
 		removeGraphic();
 		if (tree.getMark() && canMark(tree.getId().split(",")[0])) {
-			String url = URLHelper.BASE + "getTcxx?zhid=" + tree.getId()+"&yhid="+yhid;
+			String url = URLHelper.BASE + "getTcxx?zhid=" + tree.getId() + "&yhid=" + yhid;
 			new AsyncShowGraphicTask().execute(url);
 		}
-	
+
 	}
 
 	private void findAndSetListener() {
@@ -711,6 +736,7 @@ public class BzdzkActivity extends SherlockFragmentActivity {
 	}
 
 	public void back(View view) {
+		getGraphicLayer().removeAll();
 		FragmentManager fm = getSupportFragmentManager();
 		fm.popBackStack();
 		if (fm.getBackStackEntryCount() == 0)
@@ -765,8 +791,7 @@ public class BzdzkActivity extends SherlockFragmentActivity {
 			}, 2000); // 如果2秒钟内没有按下返回键，则启动定时器取消掉刚才执行的任务
 
 		} else {
-			finish();
-			super.onBackPressed();
+			BaseApplication.getInstance().exit();
 		}
 	}
 

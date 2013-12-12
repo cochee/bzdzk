@@ -34,5 +34,7 @@
     <string name="login">登录</string>
     <string name="is_empty">用户名和密码不能为空</string>
     <string name="system_error">系统异常，请稍后再试</string>
+    <string name="logining">正在登录中，请稍后...</string>
+    <string name="logout">注销</string>
 
 </resources>
