@@ -17,24 +17,23 @@ import org.apache.http.util.EntityUtils;
 
 public class URLHelper {
 
+	// 地图服务地址
+	public final static String URL = "http://192.168.1.101:6080/arcgis/rest/services/PGIS/bzdzk/MapServer";
+	// 服务器地址
 	public static final String BASE = "http://192.168.1.101:8080/bzdzk/dzcj/";
+	// 初始化树
+	public static final String TREE = BASE + "mjcjAndroidTree";
 
-	// 责任区
-	public static final String ZRQ = BASE + "mjcjAndroidTree";
-	// 街路巷
-	public static final String JLX = "";
 	// 小区
-	public static final String XQ = "";
-	// 建筑物
-	public static final String JZW = "";
-	// 自然村
-	public static final String ZRC = "";
+	public static final String XQ = "/13";
 	// 门牌号
-	public static final String MPH = "";
+	public static final String MPH = "/12";
+	// 建筑物
+	public static final String JZW = "/11";
 	// 单元
-	public static final String DY = "";
-	// 房间
-	public static final String FJ = "";
+	public static final String DY = "/11";
+	// 房间.
+	public static final String FJ = "/11";
 
 	public static String queryStringForPost(String url, Map<String, String> params) {
 		List<NameValuePair> pairs = new ArrayList<NameValuePair>();

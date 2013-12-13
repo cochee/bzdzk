@@ -279,7 +279,12 @@ int drawable indicator_bg_bottom 0x7f020075
 int drawable indicator_bg_top 0x7f020076
 int drawable item_selecter 0x7f020077
 int drawable list_item_down 0x7f020078
-int drawable shadow 0x7f020079
+int drawable login 0x7f020079
+int drawable logout 0x7f02007a
+int drawable mark 0x7f02007b
+int drawable mark_bt 0x7f02007c
+int drawable shadow 0x7f02007d
+int drawable un_mark_bt 0x7f02007e
 int id abs__action_bar 0x7f05002c
 int id abs__action_bar_container 0x7f05002b
 int id abs__action_bar_subtitle 0x7f05001d
@@ -323,8 +328,8 @@ int id both 0x7f050013
 int id disableHome 0x7f050009
 int id disabled 0x7f050010
 int id edit_query 0x7f050032
-int id fl_inner 0x7f050048
-int id flag 0x7f05004e
+int id fl_inner 0x7f050049
+int id flag 0x7f05004f
 int id flip 0x7f050018
 int id gridview 0x7f050019
 int id homeAsUp 0x7f050006
@@ -335,8 +340,8 @@ int id login_linear 0x7f05003e
 int id manualOnly 0x7f050014
 int id map 0x7f050044
 int id mark 0x7f050045
-int id menu_frame 0x7f050047
-int id name 0x7f05004f
+int id menu_frame 0x7f050048
+int id name 0x7f050047
 int id normal 0x7f050001
 int id password 0x7f050041
 int id progressBar 0x7f050046
@@ -344,11 +349,11 @@ int id pullDownFromTop 0x7f050015
 int id pullFromEnd 0x7f050012
 int id pullFromStart 0x7f050011
 int id pullUpFromBottom 0x7f050016
-int id pull_refresh_list 0x7f05004d
-int id pull_to_refresh_image 0x7f050049
-int id pull_to_refresh_progress 0x7f05004a
-int id pull_to_refresh_sub_text 0x7f05004c
-int id pull_to_refresh_text 0x7f05004b
+int id pull_refresh_list 0x7f05004e
+int id pull_to_refresh_image 0x7f05004a
+int id pull_to_refresh_progress 0x7f05004b
+int id pull_to_refresh_sub_text 0x7f05004d
+int id pull_to_refresh_text 0x7f05004c
 int id rotate 0x7f050017
 int id save 0x7f050042
 int id scrollview 0x7f05001b
@@ -405,6 +410,7 @@ int string abs__searchview_description_voice 0x7f0a000c
 int string abs__shareactionprovider_share_with 0x7f0a0006
 int string abs__shareactionprovider_share_with_application 0x7f0a0007
 int string app_name 0x7f0a0013
+int string confirm_logout 0x7f0a0032
 int string confirm_mark 0x7f0a001b
 int string confirm_un_mark 0x7f0a001c
 int string extent 0x7f0a0016
@@ -418,6 +424,7 @@ int string logout 0x7f0a0031
 int string marking 0x7f0a0019
 int string negative 0x7f0a001e
 int string no_child 0x7f0a0020
+int string none 0x7f0a0033
 int string online_error 0x7f0a001f
 int string password 0x7f0a002a
 int string positive 0x7f0a001d
@@ -441,6 +448,7 @@ int string un_marking 0x7f0a001a
 int string username 0x7f0a0028
 int string write_password 0x7f0a002b
 int string write_username 0x7f0a0029
+int style AppTheme 0x7f0b0059
 int style Sherlock___TextAppearance_Small 0x7f0b0046
 int style Sherlock___Theme 0x7f0b0051
 int style Sherlock___Theme_DarkActionBar 0x7f0b0053
@@ -530,6 +538,7 @@ int style Widget_Sherlock_ProgressBar_Horizontal 0x7f0b0030
 int style Widget_Sherlock_SearchAutoCompleteTextView 0x7f0b0034
 int style Widget_Sherlock_Spinner_DropDown_ActionBar 0x7f0b0024
 int style Widget_Sherlock_TextView_SpinnerItem 0x7f0b0032
+int style myactionMenuTextAppearance 0x7f0b005a
 int[] styleable PullToRefresh { 0x7f010062, 0x7f010063, 0x7f010064, 0x7f010065, 0x7f010066, 0x7f010067, 0x7f010068, 0x7f010069, 0x7f01006a, 0x7f01006b, 0x7f01006c, 0x7f01006d, 0x7f01006e, 0x7f01006f, 0x7f010070, 0x7f010071, 0x7f010072, 0x7f010073, 0x7f010074 }
 int styleable PullToRefresh_ptrAdapterViewBackground 16
 int styleable PullToRefresh_ptrAnimationStyle 12

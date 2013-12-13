@@ -12,8 +12,8 @@ import org.json.JSONObject;
 import com.actionbarsherlock.app.SherlockFragment;
 import com.actionbarsherlock.app.SherlockFragmentActivity;
 import com.handmark.pulltorefresh.library.PullToRefreshBase;
+import com.handmark.pulltorefresh.library.PullToRefreshBase.OnRefreshListener;
 import com.handmark.pulltorefresh.library.PullToRefreshListView;
-import com.handmark.pulltorefresh.library.PullToRefreshBase.OnRefreshListener2;
 import com.vallny.bzdzk.adapter.TreeAdapter;
 import com.vallny.bzdzk.bean.TreeBean;
 import com.vallny.bzdzk.util.TreeHelper;
@@ -41,7 +41,7 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.Toast;
 
 @SuppressLint("ValidFragment")
-public class TreeFragment extends SherlockFragment implements OnRefreshListener2<ListView>, OnItemClickListener, OnItemLongClickListener {
+public class TreeFragment extends SherlockFragment implements OnRefreshListener<ListView>, OnItemClickListener, OnItemLongClickListener {
 
 	private final static String TAG = "com.vallny.bzdzk";
 	private View view;
@@ -85,7 +85,7 @@ public class TreeFragment extends SherlockFragment implements OnRefreshListener2
 
 			mPullRefreshListView = (PullToRefreshListView) view.findViewById(R.id.pull_refresh_list);
 			treeAdapter = new TreeAdapter(activity);
-			treeAdapter.setItemList(list);
+			treeAdapter.addItemList(list);
 			mPullRefreshListView.setAdapter(treeAdapter);
 			// mPullRefreshListView.setRefreshing();
 			mPullRefreshListView.setOnRefreshListener(this);
@@ -111,50 +111,6 @@ public class TreeFragment extends SherlockFragment implements OnRefreshListener2
 		this.activity = (BzdzkActivity) activity;
 	}
 
-	class AsyncTreeTask extends AsyncTask<String, Void, Void> {
-
-		private long pageNo;
-		private boolean isNew;
-		private ArrayList<TreeBean> newList;
-
-		public AsyncTreeTask(long pageNo, boolean isNew) {
-			this.pageNo = pageNo;
-			this.isNew = isNew;
-		}
-
-		@Override
-		protected Void doInBackground(String... params) {
-			isOnline = true;
-			String json = URLHelper.queryStringForGet(params[0]);
-			if (TextUtils.isEmpty(json) || json.equals("连接错误！")) {
-				isOnline = false;
-			} else {
-				newList = (ArrayList<TreeBean>) JSONHelper.JSON2List(json);
-			}
-			if (isNew) {
-				itemList.clear();
-			}
-			itemList.addAll(newList);
-			return null;
-		}
-
-		@Override
-		protected void onPostExecute(Void result) {
-			super.onPostExecute(result);
-
-			if (isOnline) {
-				treeAdapter.setItemList(itemList);
-				treeAdapter.notifyDataSetChanged();
-
-			} else {
-				Toast.makeText(activity, R.string.online_error, Toast.LENGTH_LONG).show();
-			}
-			mPullRefreshListView.onRefreshComplete();
-
-		}
-
-	}
-
 	/**
 	 * 点击
 	 */
@@ -178,24 +134,6 @@ public class TreeFragment extends SherlockFragment implements OnRefreshListener2
 	}
 
 	/**
-	 * 下拉
-	 */
-	@Override
-	public void onPullDownToRefresh(PullToRefreshBase<ListView> refreshView) {
-		pageNo = 1;
-		// new AsyncTreeTask(pageNo, true).execute();
-	}
-
-	/**
-	 * 上拉
-	 */
-	@Override
-	public void onPullUpToRefresh(PullToRefreshBase<ListView> refreshView) {
-		pageNo++;
-		// new AsyncTreeTask(pageNo, false).execute();
-	}
-
-	/**
 	 * 长按
 	 */
 	@Override
@@ -203,8 +141,10 @@ public class TreeFragment extends SherlockFragment implements OnRefreshListener2
 
 		Log.e(TAG, position + "****" + id + "LongClick");
 		activity.hiddenButton();
+		activity.showProgressBar(false);
+		activity.setShowGraphic(false);
 		TreeBean tree = (TreeBean) arg0.getAdapter().getItem(position);
-		String url = URLHelper.ZRQ + "?sjid=" + tree.getId();
+		String url = URLHelper.TREE + "?sjid=" + tree.getId();
 		TreeHelper.getInstance(activity, false, tree).initTree(url);
 
 		return true;
@@ -225,5 +165,59 @@ public class TreeFragment extends SherlockFragment implements OnRefreshListener2
 	public void setCurent_tree(TreeBean curent_tree) {
 		this.curent_tree = curent_tree;
 	}
+
+	@Override
+	public void onRefresh(PullToRefreshBase<ListView> refreshView) {
+		pageNo++;
+
+		new AsyncTreeTask(pageNo).execute(url);
+
+	}
+
+	class AsyncTreeTask extends AsyncTask<String, Void, Void> {
+
+		private long pageNo;
+		private boolean isNew;
+		private ArrayList<TreeBean> newList;
+
+		public AsyncTreeTask(long pageNo) {
+			this.pageNo = pageNo;
+		}
+
+		@Override
+		protected Void doInBackground(String... params) {
+			isOnline = true;
+			String json = URLHelper.queryStringForGet(params[0] + "&pageNo=" + pageNo);
+			if (json == null || json.equals("连接错误！")) {
+				isOnline = false;
+			} else if ("".equals(json)) {
+				return null;
+			} else {
+				newList = (ArrayList<TreeBean>) JSONHelper.JSON2List(json);
+				// itemList.addAll(newList);
+			}
+			return null;
+		}
+
+		@Override
+		protected void onPostExecute(Void result) {
+			super.onPostExecute(result);
+
+			if (newList == null) {
+				Toast.makeText(activity, R.string.none, Toast.LENGTH_LONG).show();
+			} else {
+				if (isOnline) {
+					treeAdapter.addItemList(itemList);
+					treeAdapter.notifyDataSetChanged();
+				} else {
+					Toast.makeText(activity, R.string.online_error, Toast.LENGTH_LONG).show();
+				}
+			}
+			mPullRefreshListView.onRefreshComplete();
+
+		}
+
+	}
+
 
 }

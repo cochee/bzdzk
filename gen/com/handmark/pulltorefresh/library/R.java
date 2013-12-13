@@ -337,7 +337,7 @@ public final class R {
 		public static final int disableHome = 0x7f050009;
 		public static final int disabled = 0x7f050010;
 		public static final int edit_query = 0x7f050032;
-		public static final int fl_inner = 0x7f050048;
+		public static final int fl_inner = 0x7f050049;
 		public static final int flip = 0x7f050018;
 		public static final int gridview = 0x7f050019;
 		public static final int homeAsUp = 0x7f050006;
@@ -348,10 +348,10 @@ public final class R {
 		public static final int pullFromEnd = 0x7f050012;
 		public static final int pullFromStart = 0x7f050011;
 		public static final int pullUpFromBottom = 0x7f050016;
-		public static final int pull_to_refresh_image = 0x7f050049;
-		public static final int pull_to_refresh_progress = 0x7f05004a;
-		public static final int pull_to_refresh_sub_text = 0x7f05004c;
-		public static final int pull_to_refresh_text = 0x7f05004b;
+		public static final int pull_to_refresh_image = 0x7f05004a;
+		public static final int pull_to_refresh_progress = 0x7f05004b;
+		public static final int pull_to_refresh_sub_text = 0x7f05004d;
+		public static final int pull_to_refresh_text = 0x7f05004c;
 		public static final int rotate = 0x7f050017;
 		public static final int scrollview = 0x7f05001b;
 		public static final int showCustom = 0x7f050008;

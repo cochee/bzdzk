@@ -20,6 +20,6 @@
         android:footerDividersEnabled="true"
         android:headerDividersEnabled="true"
         android:smoothScrollbar="true"
-        ptr:ptrMode="both" />
+        ptr:ptrMode="pullUpFromBottom" />
 
 </LinearLayout>

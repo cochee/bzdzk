@@ -19,6 +19,7 @@ import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.Toast;
 
 import com.actionbarsherlock.app.SherlockActivity;
@@ -31,7 +32,7 @@ public class LoginActivity extends BaseActivity {
 	private EditText username;
 	private EditText password;
 	private CheckBox save;
-	private Button login;
+	private ImageButton login;
 	private ProgressDialog progress;
 
 	private SharedPreferences sp;
@@ -55,7 +56,7 @@ public class LoginActivity extends BaseActivity {
 		username = (EditText) findViewById(R.id.username);
 		password = (EditText) findViewById(R.id.password);
 		save = (CheckBox) findViewById(R.id.save);
-		login = (Button) findViewById(R.id.login);
+		login = (ImageButton) findViewById(R.id.login);
 
 		sp = getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
 		final String _username = sp.getString("loginname", null);
@@ -149,9 +150,7 @@ public class LoginActivity extends BaseActivity {
 
 	@Override
 	public void onBackPressed() {
-
 		exitBy2Click();
-
 	}
 
 	private void exitBy2Click() {

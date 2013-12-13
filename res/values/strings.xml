@@ -2,6 +2,8 @@
 <resources>
 
     <string name="app_name">标准地址库</string>
+    
+    
     <string name="query_name">查询</string>
     <string name="query_hint">输入地名</string>
     <string name="extent">选取范围</string>
@@ -36,5 +38,7 @@
     <string name="system_error">系统异常，请稍后再试</string>
     <string name="logining">正在登录中，请稍后...</string>
     <string name="logout">注销</string>
+    <string name="confirm_logout">确认注销？</string>
+    <string name="none">没有新的列表项了</string>
 
 </resources>

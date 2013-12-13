@@ -29,11 +29,13 @@ public class TreeHelper {
 	private static boolean _isFirst;
 	private static TreeBean _parent;
 	private static TreeHelper tree;
+	private static String _url;
 
 	private TreeHelper() {
 	}
 
 	public void initTree(final String url) {
+		_url = url;
 		progress = new ProgressDialog(_activity);
 		progress.setCancelable(false);
 		progress.setCanceledOnTouchOutside(false);
@@ -70,7 +72,7 @@ public class TreeHelper {
 					switch (msg.what) {
 					case IS_ONLINE_TRUE:
 						FragmentTransaction ft = _activity.getSupportFragmentManager().beginTransaction();
-						TreeFragment fragment = new TreeFragment((ArrayList<TreeBean>) msg.obj);
+						TreeFragment fragment = new TreeFragment(_url,(ArrayList<TreeBean>) msg.obj);
 						fragment.setParent_tree(_parent);
 						ft.replace(R.id.menu_frame, fragment, _parent == null ? "" : _parent.getId());
 						if (!_isFirst)

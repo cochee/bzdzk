@@ -5,22 +5,24 @@
     android:layout_height="match_parent"
     android:orientation="vertical" >
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="伊利丹"
-        android:textSize="20dp" />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="?android:actionBarSize"
+        android:background="#606060" >
+
+        <TextView
+            android:id="@+id/name"
+            android:layout_width="wrap_content"
+            android:layout_height="?android:actionBarSize"
+            android:layout_marginLeft="15dp"
+            android:gravity="center_vertical"
+            android:textSize="20dp" />
+    </LinearLayout>
 
     <FrameLayout
         android:id="@+id/menu_frame"
         android:layout_width="fill_parent"
         android:layout_height="0dp"
         android:layout_weight="1" />
-
-    <Button
-        android:onClick="back"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="返回" />
 
 </LinearLayout>

@@ -12,7 +12,7 @@ public class BaseApplication extends Application {
 
 	private static BaseApplication instance;
 
-	private BaseApplication() {
+	public BaseApplication() {
 	}
 
 	// 单例模式中获取唯一的ExitApplication 实例

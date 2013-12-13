@@ -1059,7 +1059,12 @@ containing a value of this type.
         public static final int indicator_bg_top=0x7f020076;
         public static final int item_selecter=0x7f020077;
         public static final int list_item_down=0x7f020078;
-        public static final int shadow=0x7f020079;
+        public static final int login=0x7f020079;
+        public static final int logout=0x7f02007a;
+        public static final int mark=0x7f02007b;
+        public static final int mark_bt=0x7f02007c;
+        public static final int shadow=0x7f02007d;
+        public static final int un_mark_bt=0x7f02007e;
     }
     public static final class id {
         public static final int abs__action_bar=0x7f05002c;
@@ -1105,8 +1110,8 @@ containing a value of this type.
         public static final int disableHome=0x7f050009;
         public static final int disabled=0x7f050010;
         public static final int edit_query=0x7f050032;
-        public static final int fl_inner=0x7f050048;
-        public static final int flag=0x7f05004e;
+        public static final int fl_inner=0x7f050049;
+        public static final int flag=0x7f05004f;
         public static final int flip=0x7f050018;
         public static final int gridview=0x7f050019;
         public static final int homeAsUp=0x7f050006;
@@ -1117,8 +1122,8 @@ containing a value of this type.
         public static final int manualOnly=0x7f050014;
         public static final int map=0x7f050044;
         public static final int mark=0x7f050045;
-        public static final int menu_frame=0x7f050047;
-        public static final int name=0x7f05004f;
+        public static final int menu_frame=0x7f050048;
+        public static final int name=0x7f050047;
         public static final int normal=0x7f050001;
         public static final int password=0x7f050041;
         public static final int progressBar=0x7f050046;
@@ -1126,11 +1131,11 @@ containing a value of this type.
         public static final int pullFromEnd=0x7f050012;
         public static final int pullFromStart=0x7f050011;
         public static final int pullUpFromBottom=0x7f050016;
-        public static final int pull_refresh_list=0x7f05004d;
-        public static final int pull_to_refresh_image=0x7f050049;
-        public static final int pull_to_refresh_progress=0x7f05004a;
-        public static final int pull_to_refresh_sub_text=0x7f05004c;
-        public static final int pull_to_refresh_text=0x7f05004b;
+        public static final int pull_refresh_list=0x7f05004e;
+        public static final int pull_to_refresh_image=0x7f05004a;
+        public static final int pull_to_refresh_progress=0x7f05004b;
+        public static final int pull_to_refresh_sub_text=0x7f05004d;
+        public static final int pull_to_refresh_text=0x7f05004c;
         public static final int rotate=0x7f050017;
         public static final int save=0x7f050042;
         public static final int scrollview=0x7f05001b;
@@ -1219,6 +1224,7 @@ containing a value of this type.
          */
         public static final int abs__shareactionprovider_share_with_application=0x7f0a0007;
         public static final int app_name=0x7f0a0013;
+        public static final int confirm_logout=0x7f0a0032;
         public static final int confirm_mark=0x7f0a001b;
         public static final int confirm_un_mark=0x7f0a001c;
         public static final int extent=0x7f0a0016;
@@ -1232,6 +1238,7 @@ containing a value of this type.
         public static final int marking=0x7f0a0019;
         public static final int negative=0x7f0a001e;
         public static final int no_child=0x7f0a0020;
+        public static final int none=0x7f0a0033;
         /**  网络连接错误 
          */
         public static final int online_error=0x7f0a001f;
@@ -1264,6 +1271,7 @@ containing a value of this type.
         public static final int write_username=0x7f0a0029;
     }
     public static final class style {
+        public static final int AppTheme=0x7f0b0059;
         public static final int Sherlock___TextAppearance_Small=0x7f0b0046;
         public static final int Sherlock___Theme=0x7f0b0051;
         public static final int Sherlock___Theme_DarkActionBar=0x7f0b0053;
@@ -1353,6 +1361,7 @@ containing a value of this type.
         public static final int Widget_Sherlock_SearchAutoCompleteTextView=0x7f0b0034;
         public static final int Widget_Sherlock_Spinner_DropDown_ActionBar=0x7f0b0024;
         public static final int Widget_Sherlock_TextView_SpinnerItem=0x7f0b0032;
+        public static final int myactionMenuTextAppearance=0x7f0b005a;
     }
     public static final class styleable {
         /** Attributes that can be used with a PullToRefresh.

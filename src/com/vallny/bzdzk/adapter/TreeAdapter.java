@@ -29,12 +29,10 @@ public class TreeAdapter extends BaseAdapter {
 		mInflater = LayoutInflater.from(context);
 		treeList = new ArrayList<TreeBean>();
 		this.context = context;
-
 	}
 
-	public void setItemList(List<TreeBean> msgList) {
-		this.treeList = msgList;
-
+	public void addItemList(List<TreeBean> msgList) {
+		this.treeList.addAll(msgList);
 	}
 
 	public List<TreeBean> getItemList() {
@@ -72,7 +70,7 @@ public class TreeAdapter extends BaseAdapter {
 
 		TreeBean tree = treeList.get(position);
 		if (tree.getMark()) {
-			holder.flag.setImageResource(R.drawable.ic_launcher);
+			holder.flag.setImageResource(R.drawable.mark);
 		} else {
 			holder.flag.setImageBitmap(null);
 		}
